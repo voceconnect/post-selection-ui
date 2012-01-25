@@ -74,7 +74,7 @@ class Post_Selection_UI {
 			$selected = array();
 		}
 		
-		$psu_box = new Post_Selection_Box('foobar', array('post_type' => $args['post_type'], 'selected_ids' => $selected));
+		$psu_box = new Post_Selection_Box('foobar', array('post_type' => $args['post_type'], 'selected' => $selected));
 		
 		$response = new stdClass();
 		$response->rows = $psu_box->render_results($args);
@@ -98,10 +98,10 @@ class Post_Selection_Box {
 		$defaults = array(
 			'post_type' => 'post',
 			'limit' => 0,
-			'selected_ids' => array(),
+			'selected' => array(),
 		);
 		$args = wp_parse_args($args, $defaults);
-		$args['selected_ids'] = array_map('intval', $args['selected_ids']);
+		$args['selected'] = array_map('intval', $args['selected']);
 		$this->args = $args;
 		
 		$this->name = $name;
@@ -111,7 +111,7 @@ class Post_Selection_Box {
 		$defaults = array(
 			'post_type' => $this->args['post_type'],
 			'posts_per_page' => 5,
-			'post__not_in' => $this->args['selected_ids'],
+			'post__not_in' => $this->args['selected'],
 			'paged' => 1
 		);
 			
@@ -185,7 +185,7 @@ class Post_Selection_Box {
 		ob_start();
 		?>
 		<div class="psu-box" data-post_type='<?php echo esc_attr($this->args['post_type']) ?>' data-cardinality='<?php echo $this->args['limit'] ?>'>
-			<input type="hidden" name="<?php echo esc_attr($this->name); ?>" value="<?php echo join(',', $this->args['selected_ids']) ?>" />
+			<input type="hidden" name="<?php echo esc_attr($this->name); ?>" value="<?php echo join(',', $this->args['selected']) ?>" />
 			<table class="psu-selected" >
 				<thead>
 					<tr>
@@ -195,7 +195,7 @@ class Post_Selection_Box {
 					</tr>
 				</thead>
 				<tbody>
-					<?php echo $this->render_selected_rows($this->args['selected_ids']); ?>
+					<?php echo $this->render_selected_rows($this->args['selected']); ?>
 				</tbody>
 			</table>
 
