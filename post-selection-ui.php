@@ -74,7 +74,7 @@ class Post_Selection_UI {
 			$selected = array();
 		}
 		
-		$psu_box = new Post_Selection_Box('foobar', $args['post_type'], $selected);
+		$psu_box = new Post_Selection_Box('foobar', array('post_type' => $args['post_type'], 'selected_ids' => $selected));
 		
 		$response = new stdClass();
 		$response->rows = $psu_box->render_results($args);
@@ -84,47 +84,45 @@ class Post_Selection_UI {
 }
 add_action('init', array('Post_Selection_UI', 'init'));
 
-function post_selection_ui($name, $post_type, $selected_ids = array()) {
-	$select_box = new Post_Selection_Box($name, $post_type, $selected_ids);
+function post_selection_ui($name, $args) {
+	$select_box = new Post_Selection_Box($name, $args);
 	return $select_box->render();
 }
 
 
 class Post_Selection_Box {
 	private $name;
-	private $post_type;
-	private $selected_ids;
+	private $args;
 	
-	public function __construct($name, $post_type, $selected_ids) {
-		$this->post_type = get_post_type_object($post_type);
-		if(!$this->post_type) {
-			_doing_it_wrong( __FUNCTION__, sprintf( __( 'The post type %s does not exist.' ), $post_type), '3.3' );
-			$this->post_type = get_post_type_object('post');	
-		}
+	public function __construct($name, $args = array() ) {
+		$defaults = array(
+			'post_type' => 'post',
+			'limit' => 0,
+			'selected_ids' => array(),
+		);
+		$args = wp_parse_args($args, $defaults);
+		$args['selected_ids'] = array_map('intval', $args['selected_ids']);
+		$this->args = $args;
+		
 		$this->name = $name;
-		$this->selected_ids = array_map('intval', $selected_ids);
 	}
 	
-	public function get_addable_query($args) {
+	private function get_addable_query($args) {
 		$defaults = array(
-			'post_type' => $this->post_type->name,
+			'post_type' => $this->args['post_type'],
 			'posts_per_page' => 5,
-			'post__not_in' => $this->selected_ids,
+			'post__not_in' => $this->args['selected_ids'],
 			'paged' => 1
 		);
 			
 		$query_args = wp_parse_args($args, $defaults);
 		return new WP_Query($query_args);
-		
 	}
-
 
 	/**
 	 * Renders the add_rows for the selection box
 	 * @param WP_Query $wp_query
 	 * @return string 
-	 * 
-	 * @todo look into pre-caching the posts all at once
 	 */
 	public function render_addable_rows($wp_query) {
 		$output = '';
@@ -183,25 +181,26 @@ class Post_Selection_Box {
 	}
 	
 	public function render() {
+		$post_type_obj = get_post_type_object($this->args['post_type']);
 		ob_start();
 		?>
-		<div class="psu-box" data-post_type='<?php echo esc_attr($this->post_type->name) ?>' data-cardinality='0'>
-			<input type="hidden" name="<?php echo esc_attr($this->name); ?>" value="<?php echo join(',', $this->selected_ids) ?>" />
+		<div class="psu-box" data-post_type='<?php echo esc_attr($this->args['post_type']) ?>' data-cardinality='<?php echo $this->args['limit'] ?>'>
+			<input type="hidden" name="<?php echo esc_attr($this->name); ?>" value="<?php echo join(',', $this->args['selected_ids']) ?>" />
 			<table class="psu-selected" >
 				<thead>
 					<tr>
-						<th class="psu-col-delete"><a href="#" title="<?php printf(__("Remove all %s"), $this->post_type->labels->name) ?>"></a></th>
-						<th class="psu-col-title"><?php echo esc_html($this->post_type->labels->singular_name); ?></th>
+						<th class="psu-col-delete"><a href="#" title="<?php printf(__("Remove all %s"), $post_type_obj->labels->name) ?>"></a></th>
+						<th class="psu-col-title"><?php echo esc_html($post_type_obj->labels->singular_name); ?></th>
 						<th class="psu-col-order"><?php _e('Sort'); ?></th>
 					</tr>
 				</thead>
 				<tbody>
-					<?php echo $this->render_selected_rows($this->selected_ids); ?>
+					<?php echo $this->render_selected_rows($this->args['selected_ids']); ?>
 				</tbody>
 			</table>
 
 			<div class="psu-add-posts" >
-				<p><strong><?php printf(__('Add %s'), esc_html($this->post_type->labels->singular_name)); ?>:</strong></p>
+				<p><strong><?php printf(__('Add %s'), esc_html($post_type_obj->labels->singular_name)); ?>:</strong></p>
 
 				<ul class="wp-tab-bar clearfix">
 					<li class="wp-tab-active" data-ref=".psu-tab-search"><a href="#">Search</a></li>

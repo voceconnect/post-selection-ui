@@ -83,9 +83,9 @@
 				}
 				
 				if (is_full()) {
-					$selectionBox.hide();
+					$selectionBox.find('.psu-add-posts').hide();
 				} else {
-					$selectionBox.show();
+					$selectionBox.find('.psu-add-posts').show();
 				}
 			};
 
