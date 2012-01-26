@@ -221,14 +221,7 @@ class Post_Selection_Box {
 			</div>
 
 		</div>
-		<?php 
-		if(defined('DOING_AJAX') && DOING_AJAX) {
-			?>
-			<script type="text/javascript">
-				jQuery('#<?php echo esc_js($this->args['id'] )?>').post_selection_ui();
-			</script>
-			<?php
-		}
+		<?php
 		return ob_get_clean();
 	}
 }

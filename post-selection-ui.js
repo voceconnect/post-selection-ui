@@ -210,7 +210,17 @@
 		$('.psu-search input[placeholder]').each(setVal).focus(clearVal).blur(setVal);
 	}
 	
-	function __bind(me, fn){ return function(){ return fn.apply(me, arguments) } }
+	function __bind(me, fn){return function(){return fn.apply(me, arguments)}}
 	
 	$('.psu-box').post_selection_ui();
+	
+	//work around for first creation of widget
+	if(typeof(wpWidgets) === 'object') {
+		var oldSave = __bind(wpWidgets, wpWidgets.fixLabels);
+		
+		wpWidgets.fixLabels = function(widget) {
+			oldSave(widget);
+			$('.psu-box').post_selection_ui();
+		};
+	}
 })(jQuery);
