@@ -99,6 +99,7 @@ class Post_Selection_Box {
 			'post_type' => 'post',
 			'limit' => 0,
 			'selected' => array(),
+			'id' => $name,
 		);
 		$args = wp_parse_args($args, $defaults);
 		$args['selected'] = array_map('intval', $args['selected']);
@@ -184,7 +185,7 @@ class Post_Selection_Box {
 		$post_type_obj = get_post_type_object($this->args['post_type']);
 		ob_start();
 		?>
-		<div class="psu-box" data-post_type='<?php echo esc_attr($this->args['post_type']) ?>' data-cardinality='<?php echo $this->args['limit'] ?>'>
+		<div id="<?php echo esc_attr($this->args['id'] )?>" class="psu-box" data-post_type='<?php echo esc_attr($this->args['post_type']) ?>' data-cardinality='<?php echo $this->args['limit'] ?>'>
 			<input type="hidden" name="<?php echo esc_attr($this->name); ?>" value="<?php echo join(',', $this->args['selected']) ?>" />
 			<table class="psu-selected" >
 				<thead>
@@ -220,7 +221,14 @@ class Post_Selection_Box {
 			</div>
 
 		</div>
-		<?php
+		<?php 
+		if(defined('DOING_AJAX') && DOING_AJAX) {
+			?>
+			<script type="text/javascript">
+				jQuery('#<?php echo esc_js($this->args['id'] )?>').post_selection_ui();
+			</script>
+			<?php
+		}
 		return ob_get_clean();
 	}
 }
