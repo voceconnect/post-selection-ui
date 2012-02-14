@@ -131,10 +131,16 @@ class Post_Selection_Box {
 			if(!get_post($post->ID)) {
 				continue;
 			}
+			
+			$title = "<a href='".get_edit_post_link($post->ID)."' title='Edit Post'>".esc_html(get_the_title($post->ID))."</a>";
+			
+			$title = apply_filters('post-selection-ui-row-title', $title, $post->ID);
+			
 			$output .= "<tr data-post_id='{$post->ID}'>\n".
 				"\t<td class='psu-col-create'><a href='#' title='Add'></a></td>".
-				"\t<td class='psu-col-title'><a href='".get_edit_post_link($post->ID)."' title='Edit Post'>".esc_html(get_the_title($post->ID))."</a></td>\n".
-				"</tr>\n";
+				"\t<td class='psu-col-title'>\n";
+			$output .= $title;
+			$output .= "\n\t</td>\n</tr>\n";
 		}
 		return $output;
 	}
@@ -152,10 +158,16 @@ class Post_Selection_Box {
 			if(!get_post($post_id)) {
 				continue;
 			}
+			
+			$title = "<a href='".get_edit_post_link($post_id)."' title='Edit Post'>".esc_html(get_the_title($post_id))."</a>";
+			
+			$title = apply_filters('post-selection-ui-row-title', $title, $post_id);
+			
 			$output .= "<tr data-post_id='{$post_id}'>\n".
 				"\t<td class='psu-col-delete'><a href='#' title='Remove'></a></td>".
-				"\t<td class='psu-col-title'><a href='".get_edit_post_link($post_id)."' title='Edit Post'>".esc_html(get_the_title($post_id))."</a></td>\n".
-				"\t<td class='psu-col-order'>&nbsp;</td>".
+				"\t<td class='psu-col-title'>\n";
+			$output .= $title;
+			$output .= "\n</td>\n\t<td class='psu-col-order'>&nbsp;</td>".
 				"</tr>\n";
 		}
 		return $output;

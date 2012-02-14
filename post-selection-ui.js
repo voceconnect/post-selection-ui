@@ -5,47 +5,53 @@
 		return this.each(function() {
 			var $selectedIDs, $selectionBox, $selectedPosts, $spinner, max_posts, is_full, post_type, update_box, ajax_request, add_post, remove_all_posts, remove_post, switch_to_tab, PostsTab, searchTab, listTab, $searchInput;
 			
-      $selectionBox = $(this);
+			$selectionBox = $(this);
+			$thisID = $selectionBox.attr('id');
+			if($selectionBox.hasClass('psu-active')){
+				return false;
+			}
 			$selectedIDs = $selectionBox.children('input');
-      $selectedPosts = $selectionBox.find('.psu-selected');
+			$selectedPosts = $selectionBox.find('.psu-selected');
 			max_posts = parseInt($selectionBox.data('cardinality'));
 			post_type = $selectionBox.data('post_type');
 			
-      $spinner = $('<img>', {
-        'src': PostSelectionUI.spinner,
-        'class': 'psu-spinner'
-      });
+			$selectionBox.addClass('psu-active');
+			
+			$spinner = $('<img>', {
+				'src': PostSelectionUI.spinner,
+				'class': 'psu-spinner'
+			});
 			
 			remove_all_posts = function(ev){
-				ev.preventDefault();
-
-        if (!confirm(PostSelectionUI.clearConfirmMessage)) {
-          return;
-        }
-				
+				if (!confirm(PostSelectionUI.clearConfirmMessage))
+					return;
 				$selectedPosts.find('tbody').html('');
-				
 				update_box();
-      };
+				ev.preventDefault();
+			}
 			
 			remove_post = function(ev){
-        var $self;
-        $self = $(ev.target);
-        $self.closest('tr').remove();
+				var $self;
+				$self = $(ev.target);
+				$self.closest('tr').remove();
 				update_box();
 				ev.preventDefault();
-      };
+			}
 			
 			add_post = function(ev) {
 				var $self, $tr;
 				if(is_full())
 					return false;
-        $self = $(ev.target);
+				$self = $(ev.target);
 				$tr = $self.closest('tr');
-				$tr.appendTo($selectedPosts).append('<td class="psu-col-order">&nbsp;</td>').find('td.psu-col-create').removeClass('psu-col-create').addClass('psu-col-delete').find('a').attr('title', 'Remove');
+				
+				$tr.appendTo($selectedPosts).append('<td class="psu-col-order">&nbsp;</td>')
+				.find('td.psu-col-create').removeClass('psu-col-create').addClass('psu-col-delete')
+				.find('a').attr('title', 'Remove');
 				
 				update_box();
 				ev.preventDefault();
+				return false;
 			}
 			
 			update_box = function() {
@@ -68,33 +74,33 @@
 				} else {
 					$selectionBox.find('.psu-add-posts').show();
 				}
-			};
+			}
 
 			is_full = function() {
 				return (max_posts > 0 && $selectedPosts.find('tbody tr').length >= max_posts);
-			};
+			}
 			
 			
 			switch_to_tab = function(){
-        var $tab;
-        $tab = $(this);
-        $selectionBox.find('.wp-tab-bar li').removeClass('wp-tab-active');
-        $tab.addClass('wp-tab-active');
-        $selectionBox.find('.tabs-panel').hide().end().find($tab.data('ref')).show().find(':text').focus();
-        return false;
-      };
+				var $tab;
+				$tab = $(this);
+				$selectionBox.find('.wp-tab-bar li').removeClass('wp-tab-active');
+				$tab.addClass('wp-tab-active');
+				$selectionBox.find('.tabs-panel').hide().end().find($tab.data('ref')).show().find(':text').focus();
+				return false;
+			}
 			
 			
 			$selectionBox.delegate('th.psu-col-delete a', 'click', remove_all_posts).delegate('td.psu-col-delete a', 'click', remove_post).delegate('td.psu-col-create a', 'click', add_post).delegate('.wp-tab-bar li', 'click', switch_to_tab);
 			
 			
-      ajax_request = function(data, callback){
-        data.action = 'psu_box';
-        data._ajax_nonce = PostSelectionUI.nonce;
-        data.post_type = post_type;
+			ajax_request = function(data, callback){
+				data.action = 'psu_box';
+				data._ajax_nonce = PostSelectionUI.nonce;
+				data.post_type = post_type;
 				data.exclude = $selectedIDs.val();
-        return $.getJSON(ajaxurl + '?' + $.param(data), callback);
-      };
+				return $.getJSON(ajaxurl + '?' + $.param(data), callback);
+			}
 			
 			$selectedPosts.find('tbody').sortable({
 				handle: 'td.psu-col-order',
@@ -109,87 +115,99 @@
 				update: update_box
 			});
           
-      PostsTab = (function(){
-        PostsTab.displayName = 'PostsTab';
-        var prototype = PostsTab.prototype, constructor = PostsTab;
-        function PostsTab(selector){
-          this.tab = $selectionBox.find(selector);
-          this.init_pagination_data();
-          this.tab.delegate('.psu-prev, .psu-next', 'click', __bind(this, this.change_page));
-          this.data = {};
-        }
-        prototype.init_pagination_data = function(){
-          this.current_page = this.tab.find('.psu-current').data('num') || 1;
-          return this.total_pages = this.tab.find('.psu-total').data('num') || 1;
-        };
-        prototype.change_page = function(ev){
-          var $navButton, new_page;
-          $navButton = $(ev.target);
-          new_page = this.current_page;
-          if ($navButton.hasClass('inactive')) {
-            return false;
-          }
-          if ($navButton.hasClass('psu-prev')) {
-            new_page--;
-          } else {
-            new_page++;
-          }
-          this.find_posts(new_page);
-          return false;
-        };
-        
+			PostsTab = (function(){
+				PostsTab.displayName = 'PostsTab';
+				var prototype = PostsTab.prototype, constructor = PostsTab;
+
+				function PostsTab(selector){
+					this.tab = $selectionBox.find(selector);
+					this.init_pagination_data();
+					this.tab.delegate('.psu-prev, .psu-next', 'click', __bind(this, this.change_page));
+					this.data = {};
+				}
+
+				prototype.init_pagination_data = function(){
+					this.current_page = this.tab.find('.psu-current').data('num') || 1;
+					this.total_pages = this.tab.find('.psu-total').data('num') || 1;
+					if(this.current_page > 1){
+						this.tab.find('.psu-prev').removeClass('inactive');
+					} else {
+						this.tab.find('.psu-prev').addClass('inactive');
+					}
+					if(this.current_page == this.total_page){
+						this.tab.find('.psu-next').addClass('inactive');
+					} else {
+						this.tab.find('.psu-next').removeClass('inactive');
+					}
+					return this.total_pages;
+				}
+
+				prototype.change_page = function(ev){
+					var $navButton, new_page;
+					$navButton = $(ev.target);
+					new_page = this.current_page;
+					if ($navButton.hasClass('inactive'))
+						return false;
+					if ($navButton.hasClass('psu-prev')) {
+						new_page--;
+					} else {
+						new_page++;
+					}
+					this.find_posts(new_page);
+					return false;
+				}
+
 				prototype.find_posts = function(new_page){
-          this.data.paged = new_page
-            ? new_page > this.total_pages ? this.current_page : new_page
-            : this.current_page;
-          $spinner.appendTo(this.tab.find('.psu-navigation'));
-          return ajax_request(this.data, __bind(this, this.update_rows));
-        };
-				
-				
-        prototype.update_rows = function(response){
-          $spinner.remove();
-          this.tab.find('.psu-results, .psu-navigation, .psu-notice').remove();
-          if (!response.rows) {
-            return this.tab.append($('<div class="psu-notice">').html(response.msg));
-          } else {
-            this.tab.append(response.rows);
-            return this.init_pagination_data();
-          }
-        };
-        return PostsTab;
-      }());
-						
-      searchTab = new PostsTab('.psu-tab-search');
-      listTab = new PostsTab('.psu-tab-list');
-      $searchInput = $selectionBox.find('.psu-tab-search :text');
-      $searchInput.keypress(function(ev){
-        if (13 === ev.keyCode) {
-          return false;
-        }
-      }).keyup(function(ev){
-        var delayed;
-        if (undefined !== delayed) {
-          clearTimeout(delayed);
-        }
-        return delayed = setTimeout(function(){
-          var searchStr;
-          searchStr = $searchInput.val();
-          if ('' == searchStr || searchStr === searchTab.data.s) {
-            return;
-          }
-          searchTab.data.s = searchStr;
-          $spinner.insertAfter($searchInput).show();
-          return searchTab.find_posts(1);
-        }, 400);
-      });
+					this.data.paged = new_page ? new_page > this.total_pages ? this.current_page : new_page : this.current_page;
+					$spinner.appendTo(this.tab.find('.psu-navigation'));
+					return ajax_request(this.data, __bind(this, this.update_rows));
+				}
+
+
+				prototype.update_rows = function(response){
+					$spinner.remove();
+					this.tab.find('.psu-results, .psu-navigation, .psu-notice').remove();
+					if (!response.rows) {
+						return this.tab.append($('<div class="psu-notice">').html(response.msg));
+					} else {
+						this.tab.append(response.rows);
+						return this.init_pagination_data();
+					}
+				}
+
+				return PostsTab;
+			}());
+
+			searchTab = new PostsTab('.psu-tab-search');
+			listTab = new PostsTab('.psu-tab-list');
+			$searchInput = $selectionBox.find('.psu-tab-search :text');
+			$searchInput.keypress(function(ev){
+				if (13 === ev.keyCode) {
+					return false;
+				}
+			}).keyup(function(ev){
+				var delayed;
+				if (undefined !== delayed) {
+					clearTimeout(delayed);
+				}
+				return delayed = setTimeout(function(){
+					var searchStr;
+					searchStr = $searchInput.val();
+					if ('' == searchStr || searchStr === searchTab.data.s) {
+						return;
+					}
+					searchTab.data.s = searchStr;
+					$spinner.insertAfter($searchInput).show();
+					return searchTab.find_posts(1);
+				}, 400);
+			});
 
 			update_box(); //make sure inputs match what screen currently shows
 		});
-		
 	} //end $.fn.post_selection_ui
 	
 	var setVal, clearVal;
+	
 	if (!$('<input placeholder="1" />')[0].placeholder) {
 		setVal = function(){
 			var $this;
@@ -212,7 +230,7 @@
 	
 	function __bind(me, fn){return function(){return fn.apply(me, arguments)}}
 	
-	$('.psu-box').post_selection_ui();
+	$('#widgets-right .psu-box').post_selection_ui();
 	
 	//work around for first creation of widget
 	if(typeof(wpWidgets) === 'object') {
@@ -220,7 +238,8 @@
 		
 		wpWidgets.fixLabels = function(widget) {
 			oldSave(widget);
-			$('.psu-box').post_selection_ui();
+			console.log(widget);
+			widget.find('.psu-box').post_selection_ui();
 		};
 	}
 })(jQuery);
