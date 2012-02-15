@@ -17,7 +17,7 @@ class Post_Selection_UI {
 	
 	public static function admin_enqueue_scripts() {
 		wp_enqueue_style('post-selection-ui', self::local_url( 'post-selection-ui.css', __FILE__ ), array() );
-		wp_enqueue_script( 'post-selection-ui', self::local_url( 'post-selection-ui.js', __FILE__ ), array( 'jquery' ), null, true );
+		wp_enqueue_script( 'post-selection-ui', self::local_url( 'post-selection-ui.js', __FILE__ ), array( 'jquery', 'jquery-ui-core', 'jquery-ui-sortable' ), null, true );
 
 		wp_localize_script( 'post-selection-ui', 'PostSelectionUI', array(
 			'nonce' => wp_create_nonce( 'psu_search' ),

@@ -230,7 +230,11 @@
 	
 	function __bind(me, fn){return function(){return fn.apply(me, arguments)}}
 	
-	$('#widgets-right .psu-box').post_selection_ui();
+	if($('#widgets-right').is('*')){
+		$('#widgets-right .psu-box').post_selection_ui();
+	} else {
+		$('.psu-box').post_selection_ui();
+	}
 	
 	//work around for first creation of widget
 	if(typeof(wpWidgets) === 'object') {
