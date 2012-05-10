@@ -53,14 +53,20 @@ class Post_Selection_UI {
 		check_ajax_referer('psu_search');
 		
 		$args = array(
-			
+			'post_type' => array()
 		);
 		
-		if(!empty($_GET['post_type']) && ($post_type_obj = get_post_type_object( $_GET['post_type']) ) && current_user_can($post_type_obj->cap->read)) {
-			$args['post_type'] = $_GET['post_type'];
-		} else {
-			die('-1');
+		if(!empty($_GET['post_type']) ) {
+			$unsanitized_post_types = array_map('sanitize_key', explode(',', $_GET['post_type']));
+			foreach($unsanitized_post_types as $post_type) {
+			 if(($post_type_obj = get_post_type_object( $post_type )) && current_user_can($post_type_obj->cap->read)) {
+				 $args['post_type'][] = $post_type;
+			 }
+			}
 		}
+		if(count($args['post_type']) < 1)
+			die('-1');
+		
 		if(!empty($_GET['paged'])) {
 			$args['paged'] = absint($_GET['paged']);
 		}
@@ -96,13 +102,28 @@ class Post_Selection_Box {
 	
 	public function __construct($name, $args = array() ) {
 		$defaults = array(
-			'post_type' => 'post',
+			'post_type' => array('post'),
 			'limit' => 0,
 			'selected' => array(),
 			'id' => $name,
+			'labels' => array()
 		);
 		$args = wp_parse_args($args, $defaults);
 		$args['selected'] = array_map('intval', $args['selected']);
+		
+		$args['post_type'] = (array) $args['post_type'];
+		
+		if(count($args['post_type']) > 1) {
+			$default_labels = array(
+				'name' => 'Items',
+				'singular_name' => 'Item',
+			);
+		} else {
+			$post_type = get_post_type_object($args['post_type'][0]);
+			$default_labels = (array) $post_type->labels;
+		}
+		$args['labels'] = wp_parse_args($args['labels'], $default_labels);
+		
 		$this->args = $args;
 		
 		$this->name = $name;
@@ -194,16 +215,15 @@ class Post_Selection_Box {
 	}
 	
 	public function render() {
-		$post_type_obj = get_post_type_object($this->args['post_type']);
 		ob_start();
 		?>
-		<div id="<?php echo esc_attr($this->args['id'] )?>" class="psu-box" data-post_type='<?php echo esc_attr($this->args['post_type']) ?>' data-cardinality='<?php echo $this->args['limit'] ?>'>
+		<div id="<?php echo esc_attr($this->args['id'] )?>" class="psu-box" data-post_type='<?php echo esc_attr(implode(',', $this->args['post_type'])) ?>' data-cardinality='<?php echo $this->args['limit'] ?>'>
 			<input type="hidden" name="<?php echo esc_attr($this->name); ?>" value="<?php echo join(',', $this->args['selected']) ?>" />
 			<table class="psu-selected" >
 				<thead>
 					<tr>
-						<th class="psu-col-delete"><a href="#" title="<?php printf(__("Remove all %s"), $post_type_obj->labels->name) ?>"></a></th>
-						<th class="psu-col-title"><?php echo esc_html($post_type_obj->labels->singular_name); ?></th>
+						<th class="psu-col-delete"><a href="#" title="<?php printf(__("Remove all %s"), $args['labels']['name']) ?>"></a></th>
+						<th class="psu-col-title"><?php echo esc_html($this->args['labels']['singular_name']); ?></th>
 						<th class="psu-col-order"><?php _e('Sort'); ?></th>
 					</tr>
 				</thead>
@@ -213,7 +233,7 @@ class Post_Selection_Box {
 			</table>
 
 			<div class="psu-add-posts" >
-				<p><strong><?php printf(__('Add %s'), esc_html($post_type_obj->labels->singular_name)); ?>:</strong></p>
+				<p><strong><?php printf(__('Add %s'), esc_html($this->args['labels']['singular_name'])); ?>:</strong></p>
 
 				<ul class="wp-tab-bar clearfix">
 					<li class="wp-tab-active" data-ref=".psu-tab-search"><a href="#">Search</a></li>
