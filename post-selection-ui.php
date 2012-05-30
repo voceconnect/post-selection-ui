@@ -106,7 +106,8 @@ class Post_Selection_Box {
 			'limit' => 0,
 			'selected' => array(),
 			'id' => $name,
-			'labels' => array()
+			'labels' => array(),
+			'sortable' => true,
 		);
 		$args = wp_parse_args($args, $defaults);
 		$args['selected'] = array_map('intval', $args['selected']);
@@ -188,8 +189,11 @@ class Post_Selection_Box {
 				"\t<td class='psu-col-delete'><a href='#' title='Remove'></a></td>".
 				"\t<td class='psu-col-title'>\n";
 			$output .= $title;
-			$output .= "\n</td>\n\t<td class='psu-col-order'>&nbsp;</td>".
-				"</tr>\n";
+			$output .= "\n</td>\n";
+			if($this->args['sortable']) {
+				$output .= "\t<td class='psu-col-order'>&nbsp;</td>";
+			}
+			$output .= "</tr>\n";
 		}
 		return $output;
 	}
@@ -224,7 +228,9 @@ class Post_Selection_Box {
 					<tr>
 						<th class="psu-col-delete"><a href="#" title="<?php printf(__("Remove all %s"), $args['labels']['name']) ?>"></a></th>
 						<th class="psu-col-title"><?php echo esc_html($this->args['labels']['singular_name']); ?></th>
-						<th class="psu-col-order"><?php _e('Sort'); ?></th>
+						<?php if($this->args['sortable']) : ?>
+							<th class="psu-col-order"><?php _e('Sort'); ?></th>
+						<?php endif; ?>
 					</tr>
 				</thead>
 				<tbody>
