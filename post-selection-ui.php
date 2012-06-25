@@ -226,7 +226,7 @@ class Post_Selection_Box {
 			<table class="psu-selected" >
 				<thead>
 					<tr>
-						<th class="psu-col-delete"><a href="#" title="<?php printf(__("Remove all %s"), $args['labels']['name']) ?>"></a></th>
+						<th class="psu-col-delete"><a href="#" title="<?php printf(__("Remove all %s"), $this->args['labels']['name']) ?>"></a></th>
 						<th class="psu-col-title"><?php echo esc_html($this->args['labels']['singular_name']); ?></th>
 						<?php if($this->args['sortable']) : ?>
 							<th class="psu-col-order"><?php _e('Sort'); ?></th>
