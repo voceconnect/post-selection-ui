@@ -133,7 +133,7 @@ class Post_Selection_Box {
 	private function get_addable_query($args) {
 		$defaults = array(
 			'post_type' => $this->args['post_type'],
-			'posts_per_page' => 5,
+			'posts_per_page' => 10,
 			'post__not_in' => $this->args['selected'],
 			'paged' => 1
 		);
