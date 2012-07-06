@@ -87,7 +87,7 @@ th.psu-col-delete a {
 
 .psu-col-create,
 .psu-col-delete {
-	width: 16px;
+	width: 16px !important;
 }
 
 .psu-col-create a,
