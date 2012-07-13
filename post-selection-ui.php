@@ -103,6 +103,7 @@ class Post_Selection_Box {
 	public function __construct($name, $args = array() ) {
 		$defaults = array(
 			'post_type' => array('post'),
+			'post_status' => array('publish'),
 			'limit' => 0,
 			'selected' => array(),
 			'id' => $name,
@@ -133,6 +134,7 @@ class Post_Selection_Box {
 	private function get_addable_query($args) {
 		$defaults = array(
 			'post_type' => $this->args['post_type'],
+			'post_status' => $this->args['post_status'],
 			'posts_per_page' => 10,
 			'post__not_in' => $this->args['selected'],
 			'paged' => 1
