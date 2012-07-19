@@ -155,11 +155,12 @@ class Post_Selection_Box {
 			if(!get_post($post->ID)) {
 				continue;
 			}
-			
-			$title = "<a href='".get_edit_post_link($post->ID)."' title='Edit Post'>".esc_html(get_the_title($post->ID))."</a>";
+			if( current_user_can( get_post_type_object( $post->post_type )->cap->edit_post, $post->ID ) )
+				$title = "<a href='" . get_edit_post_link( $post->ID ) . "' title='Edit Post'>" . esc_html( get_the_title( $post->ID ) ) . "</a>";
+			else
+				$title = esc_html(get_the_title($post->ID));
 			
 			$title = apply_filters('post-selection-ui-row-title', $title, $post->ID);
-			
 			$output .= "<tr data-post_id='{$post->ID}'>\n".
 				"\t<td class='psu-col-create'><a href='#' title='Add'></a></td>".
 				"\t<td class='psu-col-title'>\n";
@@ -183,7 +184,10 @@ class Post_Selection_Box {
 				continue;
 			}
 			
-			$title = "<a href='".get_edit_post_link($post_id)."' title='Edit Post'>".esc_html(get_the_title($post_id))."</a>";
+			if( current_user_can( get_post_type_object( get_post_type($post_id) )->cap->edit_post, $post_id ) )
+				$title = "<a href='" . get_edit_post_link( $post_id ) . "' title='Edit Post'>" . esc_html( get_the_title( $post_id ) ) . "</a>";
+			else
+				$title = esc_html( get_the_title( $post_id ) );
 			
 			$title = apply_filters('post-selection-ui-row-title', $title, $post_id);
 			
