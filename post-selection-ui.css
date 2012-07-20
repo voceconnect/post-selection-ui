@@ -11,12 +11,12 @@
 .psu-box .tabs-panel {
 	border-width: 1px;
 	border-style: solid;
-	display: none;
+	display: block;
 	padding: 10px;
 }
 
 .psu-box .psu-tab-search {
-	display: block;
+	display: none;
 }
 
 /* Connections */

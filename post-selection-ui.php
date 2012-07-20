@@ -248,8 +248,8 @@ class Post_Selection_Box {
 				<p><strong><?php printf(__('Add %s'), esc_html($this->args['labels']['singular_name'])); ?>:</strong></p>
 
 				<ul class="wp-tab-bar clearfix">
-					<li class="wp-tab-active" data-ref=".psu-tab-search"><a href="#">Search</a></li>
-					<li  data-ref=".psu-tab-list"><a href="#">View All</a></li>
+					<li class="wp-tab-active" data-ref=".psu-tab-list"><a href="#">View All</a></li>
+					<li data-ref=".psu-tab-search"><a href="#">Search</a></li>
 				</ul>
 
 				<div class="psu-tab-search tabs-panel">
