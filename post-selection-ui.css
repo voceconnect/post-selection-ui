@@ -86,7 +86,8 @@ th.psu-col-delete a {
 }
 
 .psu-col-create,
-.psu-col-delete {
+.psu-col-delete,
+.psu-col-order {
 	width: 16px !important;
 }
 
@@ -97,6 +98,10 @@ th.psu-col-delete a {
 	margin-top: 1px;
 	opacity: 0.5;
 	width: 16px;
+}
+
+.psu-col-title {
+	width:100%;
 }
 
 .psu-col-create a:hover,

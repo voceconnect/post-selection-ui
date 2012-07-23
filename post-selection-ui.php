@@ -160,7 +160,7 @@ class Post_Selection_Box {
 			else
 				$title = esc_html(get_the_title($post->ID));
 			
-			$title = apply_filters('post-selection-ui-row-title', $title, $post->ID);
+			$title = apply_filters('post-selection-ui-row-title', $title, $post->ID, $this->name, $this->args);
 			$output .= "<tr data-post_id='{$post->ID}'>\n".
 				"\t<td class='psu-col-create'><a href='#' title='Add'></a></td>".
 				"\t<td class='psu-col-title'>\n";
@@ -189,8 +189,8 @@ class Post_Selection_Box {
 			else
 				$title = esc_html( get_the_title( $post_id ) );
 			
-			$title = apply_filters('post-selection-ui-row-title', $title, $post_id);
-			
+			$title = apply_filters('post-selection-ui-row-title', $title, $post_id, $this->name, $this->args);
+
 			$output .= "<tr data-post_id='{$post_id}'>\n".
 				"\t<td class='psu-col-delete'><a href='#' title='Remove'></a></td>".
 				"\t<td class='psu-col-title'>\n";
