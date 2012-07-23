@@ -108,7 +108,7 @@ class Post_Selection_Box {
 			'selected' => array(),
 			'id' => $name,
 			'labels' => array(),
-			'sortable' => true,
+			'sortable' => true
 		);
 		$args = wp_parse_args($args, $defaults);
 		$args['selected'] = array_map('intval', $args['selected']);
@@ -230,6 +230,7 @@ class Post_Selection_Box {
 		<div id="<?php echo esc_attr($this->args['id'] )?>" class="psu-box" data-post_type='<?php echo esc_attr(implode(',', $this->args['post_type'])) ?>' data-cardinality='<?php echo $this->args['limit'] ?>'>
 			<input type="hidden" name="<?php echo esc_attr($this->name); ?>" value="<?php echo join(',', $this->args['selected']) ?>" />
 			<table class="psu-selected" >
+				<?php if($this->args['limit'] != 1): ?>
 				<thead>
 					<tr>
 						<th class="psu-col-delete"><a href="#" title="<?php printf(__("Remove all %s"), $this->args['labels']['name']) ?>"></a></th>
@@ -239,6 +240,7 @@ class Post_Selection_Box {
 						<?php endif; ?>
 					</tr>
 				</thead>
+				<?php endif; ?>
 				<tbody>
 					<?php echo $this->render_selected_rows($this->args['selected']); ?>
 				</tbody>
