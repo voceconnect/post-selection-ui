@@ -161,7 +161,7 @@ class Post_Selection_Box {
 				$title = esc_html(get_the_title($post->ID));
 			
 			$title = apply_filters('post-selection-ui-row-title', $title, $post->ID, $this->name, $this->args);
-			$output .= "<tr data-post_id='{$post->ID}'>\n".
+			$output .= "<tr data-post_id='{$post->ID}' data-permalink='".  get_permalink($post->ID) . "'>\n".
 				"\t<td class='psu-col-create'><a href='#' title='Add'></a></td>".
 				"\t<td class='psu-col-title'>\n";
 			$output .= $title;

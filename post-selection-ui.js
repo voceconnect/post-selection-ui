@@ -45,11 +45,16 @@
 				$self = $(ev.target);
 				$tr = $self.closest('tr');
 				
-				$tr.appendTo($selectedPosts).append('<td class="psu-col-order">&nbsp;</td>')
-				.find('td.psu-col-create').removeClass('psu-col-create').addClass('psu-col-delete')
-				.find('a').attr('title', 'Remove');
-				
-				update_box();
+				var psu_item_selected_event = jQuery.Event('psu_item_selected');
+				$selectionBox.trigger(psu_item_selected_event, [{post_id : $tr.data('post_id'), target : $tr}]);
+				if(!psu_item_selected_event.isDefaultPrevented() ) {
+					$tr.appendTo($selectedPosts).append('<td class="psu-col-order">&nbsp;</td>')
+					.find('td.psu-col-create').removeClass('psu-col-create').addClass('psu-col-delete')
+					.find('a').attr('title', 'Remove');
+
+					update_box();
+				}
+
 				ev.preventDefault();
 				return false;
 			}
