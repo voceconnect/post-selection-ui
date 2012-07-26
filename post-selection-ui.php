@@ -156,7 +156,7 @@ class Post_Selection_Box {
 				continue;
 			}
 			if( current_user_can( get_post_type_object( $post->post_type )->cap->edit_post, $post->ID ) )
-				$title = "<a href='" . get_edit_post_link( $post->ID ) . "' title='Edit Post'>" . esc_html( get_the_title( $post->ID ) ) . "</a>";
+				$title = sprintf( '<a href="%s" title="Edit Post" target="_blank">%s</a>', get_edit_post_link( $post->ID ), esc_html( get_the_title( $post->ID ) ) );	
 			else
 				$title = esc_html(get_the_title($post->ID));
 			
@@ -185,7 +185,7 @@ class Post_Selection_Box {
 			}
 			
 			if( current_user_can( get_post_type_object( get_post_type($post_id) )->cap->edit_post, $post_id ) )
-				$title = "<a href='" . get_edit_post_link( $post_id ) . "' title='Edit Post'>" . esc_html( get_the_title( $post_id ) ) . "</a>";
+				$title = sprintf( '<a href="%s" title="Edit Post" target="_blank">%s</a>', get_edit_post_link( $post_id ), esc_html( get_the_title( $post_id ) ) );	
 			else
 				$title = esc_html( get_the_title( $post_id ) );
 			
