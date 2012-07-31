@@ -247,7 +247,9 @@
 		
 		wpWidgets.fixLabels = function(widget) {
 			oldSave(widget);
-			console.log(widget);
+			if(typeof console != 'undefined'){
+				console.log(widget);
+			}
 			widget.find('.psu-box').post_selection_ui();
 		};
 	}
