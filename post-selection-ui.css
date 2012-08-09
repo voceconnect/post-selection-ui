@@ -202,3 +202,12 @@ body.rtl .psu-navigation div {
 	margin-left: 5px;
 }
 
+.psu-row-actions {
+    padding: 2px 0 0;
+    visibility: hidden;
+		float: right;
+}
+
+.psu-col-title:hover .psu-row-actions{
+	visibility: visible;
+}

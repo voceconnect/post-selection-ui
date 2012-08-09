@@ -155,10 +155,25 @@ class Post_Selection_Box {
 			if(!get_post($post->ID)) {
 				continue;
 			}
-			if( current_user_can( get_post_type_object( $post->post_type )->cap->edit_post, $post->ID ) )
-				$title = sprintf( '<a href="%s" title="Edit Post" target="_blank">%s</a>', get_edit_post_link( $post->ID ), esc_html( get_the_title( $post->ID ) ) );	
-			else
-				$title = esc_html(get_the_title($post->ID));
+			
+			$title = esc_html(get_the_title($post->ID));
+			
+			$row_actions = '';
+			$can_edit = current_user_can( get_post_type_object( get_post_type($post->ID) )->cap->edit_post, $post->ID );
+			$post_type_object = get_post_type_object( get_post_type($post->ID));
+
+			if( $can_edit )
+				$row_actions .= sprintf('<span class="edit"><a title="Edit this item" href="%s">Edit</a> | </span>', get_edit_post_link( $post->ID ));
+
+			if ( $post_type_object->publicly_queryable ) {
+				if ( ($can_edit || !in_array( $post->post_status, array( 'pending', 'draft', 'future' ) ) ) 
+					&& ( $post->post_status != 'trash') ) {
+					$row_actions .= sprintf('<span class="view"><a rel="permalink" title="View %s" href="%s">View</a></span>', esc_attr(get_the_title($post->ID)), esc_url(get_permalink($post->ID)));
+				}
+			}
+			
+			if($row_actions)
+				$title .= '<div class="psu-row-actions">'.$row_actions.'</div>';
 			
 			$title = apply_filters('post-selection-ui-row-title', $title, $post->ID, $this->name, $this->args);
 			$output .= "<tr data-post_id='{$post->ID}' data-permalink='".  get_permalink($post->ID) . "'>\n".
@@ -184,10 +199,24 @@ class Post_Selection_Box {
 				continue;
 			}
 			
-			if( current_user_can( get_post_type_object( get_post_type($post_id) )->cap->edit_post, $post_id ) )
-				$title = sprintf( '<a href="%s" title="Edit Post" target="_blank">%s</a>', get_edit_post_link( $post_id ), esc_html( get_the_title( $post_id ) ) );	
-			else
-				$title = esc_html( get_the_title( $post_id ) );
+			$title = esc_html( get_the_title( $post_id ) );
+			
+			$row_actions = '';
+			$can_edit = current_user_can( get_post_type_object( get_post_type($post_id) )->cap->edit_post, $post_id );
+			$post_type_object = get_post_type_object( get_post_type($post_id));
+
+			if( $can_edit )
+				$row_actions .= sprintf('<span class="edit"><a title="Edit this item" href="%s">Edit</a> | </span>', get_edit_post_link( $post_id ));
+
+			if ( $post_type_object->publicly_queryable ) {
+				if ( ($can_edit || !in_array( get_post($post_id)->post_status, array( 'pending', 'draft', 'future' ) ) ) 
+					&& ( get_post($post_id)->post_status != 'trash') ) {
+					$row_actions .= sprintf('<span class="view"><a rel="permalink" title="View %s" href="%s">View</a></span>', esc_attr(get_the_title($post_id)), esc_url(get_permalink($post_id)));
+				}
+			}
+			
+			if($row_actions)
+				$title .= '<div class="psu-row-actions">'.$row_actions.'</div>';
 			
 			$title = apply_filters('post-selection-ui-row-title', $title, $post_id, $this->name, $this->args);
 
