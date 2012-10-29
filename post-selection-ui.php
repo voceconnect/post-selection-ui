@@ -108,7 +108,9 @@ class Post_Selection_Box {
 			'selected' => array(),
 			'id' => $name,
 			'labels' => array(),
-			'sortable' => true
+			'sortable' => true,
+			'orderby' => 'title',
+			'order' => 'ASC'
 		);
 		$args = wp_parse_args($args, $defaults);
 		$args['selected'] = array_map('intval', $args['selected']);
@@ -137,7 +139,9 @@ class Post_Selection_Box {
 			'post_status' => $this->args['post_status'],
 			'posts_per_page' => 10,
 			'post__not_in' => $this->args['selected'],
-			'paged' => 1
+			'paged' => 1,
+			'orderby' => $this->args['orderby'],
+			'order' => $this->args['order']
 		);
 			
 		$query_args = wp_parse_args($args, $defaults);
