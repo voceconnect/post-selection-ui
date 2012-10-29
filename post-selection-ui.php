@@ -109,8 +109,8 @@ class Post_Selection_Box {
 			'id' => $name,
 			'labels' => array(),
 			'sortable' => true,
-			'orderby' => 'title',
-			'order' => 'ASC'
+			'orderby' => 'date',
+			'order' => 'DESC'
 		);
 		$args = wp_parse_args($args, $defaults);
 		$args['selected'] = array_map('intval', $args['selected']);
