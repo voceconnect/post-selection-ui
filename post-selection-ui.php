@@ -147,7 +147,7 @@ class Post_Selection_Box {
 		$query_args = wp_parse_args($args, $defaults);
 		return new WP_Query($query_args);
 	}
-
+	
 	/**
 	 * Renders the add_rows for the selection box
 	 * @param WP_Query $wp_query
@@ -285,6 +285,7 @@ class Post_Selection_Box {
 				<ul class="wp-tab-bar clearfix">
 					<li class="wp-tab-active" data-ref=".psu-tab-list"><a href="#">View All</a></li>
 					<li data-ref=".psu-tab-search"><a href="#">Search</a></li>
+					<?php do_action('psu_tab_list_end', $post_type = $this->args['post_type'][0]); ?>
 				</ul>
 
 				<div class="psu-tab-search tabs-panel">
@@ -297,6 +298,7 @@ class Post_Selection_Box {
 					<?php echo $this->render_results(array()); ?>
 
 				</div>
+				<?php do_action('psu_tab_div_end', $post_type = $this->args['post_type'][0], $this); ?>
 			</div>
 
 		</div>
