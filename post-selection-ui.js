@@ -134,15 +134,11 @@
 				prototype.init_pagination_data = function(){
 					this.current_page = this.tab.find('.psu-current').data('num') || 1;
 					this.total_pages = this.tab.find('.psu-total').data('num') || 1;
-					if(this.current_page > 1){
-						this.tab.find('.psu-prev').removeClass('inactive');
-					} else {
-						this.tab.find('.psu-prev').addClass('inactive');
-					}
-					if(this.current_page == this.total_page){
-						this.tab.find('.psu-next').addClass('inactive');
-					} else {
-						this.tab.find('.psu-next').removeClass('inactive');
+					this.tab.find('.psu-next').remove();
+					this.tab.find('.psu-prev').remove();						
+					
+					if ( this.current_page < this.total_pages ) {
+						this.infinite_scroll(this.current_page);
 					}
 					return this.total_pages;
 				}
@@ -171,15 +167,33 @@
 
 				prototype.update_rows = function(response){
 					$spinner.remove();
-					this.tab.find('.psu-results, .psu-navigation, .psu-notice').remove();
+					this.tab.find('.psu-navigation, .psu-notice').remove();
 					if (!response.rows) {
 						return this.tab.append($('<div class="psu-notice">').html(response.msg));
 					} else {
-						this.tab.append(response.rows);
+						this.tab.append('<hr/>' + response.rows);
 						return this.init_pagination_data();
 					}
 				}
 
+				prototype.infinite_scroll =  function(page){
+					var $box = this;
+					var updating = false;
+
+					$(this.tab).scroll(function () {
+						var $this = $(this);
+						var height = this.scrollHeight - $this.height();
+						var scroll = $this.scrollTop();
+						var isScrolledToEnd = (scroll >= (height - 100));
+
+						if (isScrolledToEnd && !updating) {
+							updating = true;
+							$box.find_posts(page+1);
+						}
+					}).scrollTop(1);
+					
+					
+				}
 				return PostsTab;
 			}());
 

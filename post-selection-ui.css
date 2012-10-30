@@ -6,6 +6,11 @@
 	margin-bottom: 8px;
 }
 
+.psu-tab-list{
+	max-height: 300px;
+	overflow: scroll;
+}
+
 /* Tabs */
 
 .psu-box .tabs-panel {
