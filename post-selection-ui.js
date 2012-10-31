@@ -3,7 +3,7 @@
 	$.fn.post_selection_ui = function() {
 		
 		return this.each(function() {
-			var $selectedIDs, $selectionBox, $selectedPosts, $spinner, max_posts, is_full, post_type, update_box, ajax_request, add_post, remove_all_posts, remove_post, switch_to_tab, PostsTab, searchTab, listTab, $searchInput;
+			var $selectedIDs, $selectionBox, $selectedPosts, $spinner, autoload, max_posts, is_full, post_type, update_box, ajax_request, add_post, remove_all_posts, remove_post, switch_to_tab, PostsTab, searchTab, listTab, $searchInput;
 			
 			$selectionBox = $(this);
 			$thisID = $selectionBox.attr('id');
@@ -14,7 +14,8 @@
 			$selectedPosts = $selectionBox.find('.psu-selected');
 			max_posts = parseInt($selectionBox.data('cardinality'));
 			post_type = $selectionBox.data('post_type');
-			
+			autoload = Boolean($selectionBox.data('infinite-scroll'));
+						
 			$selectionBox.addClass('psu-active');
 			
 			$spinner = $('<img>', {
@@ -134,12 +135,29 @@
 				prototype.init_pagination_data = function(){
 					this.current_page = this.tab.find('.psu-current').data('num') || 1;
 					this.total_pages = this.tab.find('.psu-total').data('num') || 1;
-					this.tab.find('.psu-next').remove();
-					this.tab.find('.psu-prev').remove();						
 					
-					if ( this.current_page < this.total_pages ) {
-						this.infinite_scroll(this.current_page);
+					if( autoload ){
+						this.tab.find('.psu-next').remove();
+						this.tab.find('.psu-prev').remove();						
+
+						if ( this.current_page < this.total_pages ) {
+							this.infinite_scroll(this.current_page);
+						}
+						
+					} else {
+					
+						if(this.current_page > 1){
+							this.tab.find('.psu-prev').removeClass('inactive');
+						} else {
+							this.tab.find('.psu-prev').addClass('inactive');
+						}
+						if(this.current_page == this.total_pages){
+							this.tab.find('.psu-next').addClass('inactive');
+						} else {
+							this.tab.find('.psu-next').removeClass('inactive');
+						}
 					}
+					
 					return this.total_pages;
 				}
 
@@ -167,32 +185,37 @@
 
 				prototype.update_rows = function(response){
 					$spinner.remove();
-					this.tab.find('.psu-navigation, .psu-notice').remove();
 					if (!response.rows) {
 						return this.tab.append($('<div class="psu-notice">').html(response.msg));
-					} else {
+					}					
+
+					if ( autoload ){
+						this.tab.find('.psu-navigation, .psu-notice').remove();
 						this.tab.append('<hr/>' + response.rows);
-						return this.init_pagination_data();
+					} else {
+						this.tab.find('.psu-results, .psu-navigation, .psu-notice').remove();
+						this.tab.append(response.rows);						
 					}
+					
+					return this.init_pagination_data();
 				}
 
 				prototype.infinite_scroll =  function(page){
-					var $box = this;
-					var updating = false;
-
-					$(this.tab).scroll(function () {
-						var $this = $(this);
-						var height = this.scrollHeight - $this.height();
-						var scroll = $this.scrollTop();
-						var isScrolledToEnd = (scroll >= (height - 100));
-
+					var	$box = this,
+						$this = this.tab,
+						updating = false,
+						height = $this.prop('scrollHeight') - $this.height()
+					;
+					$this.scroll(function () {
+						var	scroll = $this.scrollTop(),
+							isScrolledToEnd = (scroll >= (height - 50))
+						;
+						
 						if (isScrolledToEnd && !updating) {
 							updating = true;
 							$box.find_posts(page+1);
 						}
-					}).scrollTop(1);
-					
-					
+					});
 				}
 				return PostsTab;
 			}());

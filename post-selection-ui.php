@@ -110,7 +110,8 @@ class Post_Selection_Box {
 			'labels' => array(),
 			'sortable' => true,
 			'orderby' => 'date',
-			'order' => 'DESC'
+			'order' => 'DESC',
+			'infinite_scroll' => true
 		);
 		$args = wp_parse_args($args, $defaults);
 		$args['selected'] = array_map('intval', $args['selected']);
@@ -260,7 +261,7 @@ class Post_Selection_Box {
 	public function render() {
 		ob_start();
 		?>
-		<div id="<?php echo esc_attr($this->args['id'] )?>" class="psu-box" data-post_type='<?php echo esc_attr(implode(',', $this->args['post_type'])) ?>' data-cardinality='<?php echo $this->args['limit'] ?>'>
+<div id="<?php echo esc_attr($this->args['id'] )?>" class="psu-box" data-infinite-scroll="<?php echo ($this->args['infinite_scroll']) ? 'true' : 'false' ; ?>" data-post_type='<?php echo esc_attr(implode(',', $this->args['post_type'])) ?>' data-cardinality='<?php echo $this->args['limit'] ?>'>
 			<input type="hidden" name="<?php echo esc_attr($this->name); ?>" value="<?php echo join(',', $this->args['selected']) ?>" />
 			<table class="psu-selected" >
 				<?php if($this->args['limit'] != 1): ?>
@@ -294,7 +295,7 @@ class Post_Selection_Box {
 					</div>
 				</div>
 				
-				<div class="psu-tab-list tabs-panel">
+				<div class="psu-tab-list tabs-panel" <?php echo ($this->args['infinite_scroll']) ? ' style="max-height: 270px; overflow: scroll"' : '' ; ?>>
 					<?php echo $this->render_results(array()); ?>
 
 				</div>
