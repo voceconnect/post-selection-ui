@@ -284,9 +284,12 @@ class Post_Selection_Box {
 				<p><strong><?php printf(__('Add %s'), esc_html($this->args['labels']['singular_name'])); ?>:</strong></p>
 
 				<ul class="wp-tab-bar clearfix">
-					<li class="wp-tab-active" data-ref=".psu-tab-list"><a href="#">View All</a></li>
-					<li data-ref=".psu-tab-search"><a href="#">Search</a></li>
-					<?php do_action('psu_tab_list_end', $post_type = $this->args['post_type'][0]); ?>
+					<?php
+					$html = '<li class="wp-tab-active" data-ref=".psu-tab-list"><a href="#">View All</a></li>';
+					$html .= '<li data-ref=".psu-tab-search"><a href="#">Search</a></li>';
+					$html = apply_filters('psu_tab_list', $html, $post_type = $this->args['post_type'][0]);
+					echo $html;
+					?>
 				</ul>
 
 				<div class="psu-tab-search tabs-panel">
