@@ -9,12 +9,12 @@ Plugin URI: http://voceconnect.com
 */
 
 class Post_Selection_UI {
-	
+
 	public static function init() {
 		add_action('wp_ajax_psu_box', array(__CLASS__, 'handle_ajax_search'));
 		add_action('admin_enqueue_scripts', array(__CLASS__, 'admin_enqueue_scripts'));
 	}
-	
+
 	public static function admin_enqueue_scripts() {
 		wp_enqueue_style('post-selection-ui', self::local_url( 'post-selection-ui.css', __FILE__ ), array() );
 		wp_enqueue_script( 'post-selection-ui', self::local_url( 'post-selection-ui.js', __FILE__ ), array( 'jquery', 'jquery-ui-core', 'jquery-ui-sortable' ), null, true );
@@ -26,7 +26,7 @@ class Post_Selection_UI {
 		) );
 
 	}
-	
+
 	public static function local_url($relative_path, $plugin_path) {
 		$template_dir = get_template_directory();
 
@@ -48,14 +48,14 @@ class Post_Selection_UI {
 			return plugins_url( $relative_path, $plugin_path );
 		}
 	}
-	
+
 	public static function handle_ajax_search() {
 		check_ajax_referer('psu_search');
-		
+
 		$args = array(
 			'post_type' => array()
 		);
-		
+
 		if(!empty($_GET['post_type']) ) {
 			$unsanitized_post_types = array_map('sanitize_key', explode(',', $_GET['post_type']));
 			foreach($unsanitized_post_types as $post_type) {
@@ -66,27 +66,27 @@ class Post_Selection_UI {
 		}
 		if(count($args['post_type']) < 1)
 			die('-1');
-		
+
 		if(!empty($_GET['paged'])) {
 			$args['paged'] = absint($_GET['paged']);
 		}
 		if(!empty($_GET['s'])) {
 			$args['s'] = $_GET['s'];
 		}
-		
+
 		if(!empty($_GET['exclude'])) {
 			$selected = array_map('intval', explode(',', $_GET['exclude']));
 		} else {
 			$selected = array();
 		}
-		
+
 		$psu_box = new Post_Selection_Box('foobar', array('post_type' => $args['post_type'], 'selected' => $selected));
-		
+
 		$response = new stdClass();
 		$response->rows = $psu_box->render_results($args);
 		die(json_encode($response));
 	}
-	
+
 }
 add_action('init', array('Post_Selection_UI', 'init'));
 
@@ -99,7 +99,7 @@ function post_selection_ui($name, $args) {
 class Post_Selection_Box {
 	private $name;
 	private $args;
-	
+
 	public function __construct($name, $args = array() ) {
 		$defaults = array(
 			'post_type' => array('post'),
@@ -115,9 +115,9 @@ class Post_Selection_Box {
 		);
 		$args = wp_parse_args($args, $defaults);
 		$args['selected'] = array_map('intval', $args['selected']);
-		
+
 		$args['post_type'] = (array) $args['post_type'];
-		
+
 		if(count($args['post_type']) > 1) {
 			$default_labels = array(
 				'name' => 'Items',
@@ -128,12 +128,12 @@ class Post_Selection_Box {
 			$default_labels = (array) $post_type->labels;
 		}
 		$args['labels'] = wp_parse_args($args['labels'], $default_labels);
-		
+
 		$this->args = $args;
-		
+
 		$this->name = $name;
 	}
-	
+
 	private function get_addable_query($args) {
 		$defaults = array(
 			'post_type' => $this->args['post_type'],
@@ -144,15 +144,15 @@ class Post_Selection_Box {
 			'orderby' => $this->args['orderby'],
 			'order' => $this->args['order']
 		);
-			
+
 		$query_args = wp_parse_args($args, $defaults);
 		return new WP_Query($query_args);
 	}
-	
+
 	/**
 	 * Renders the add_rows for the selection box
 	 * @param WP_Query $wp_query
-	 * @return string 
+	 * @return string
 	 */
 	public function render_addable_rows($wp_query) {
 		$output = '';
@@ -160,9 +160,9 @@ class Post_Selection_Box {
 			if(!get_post($post->ID)) {
 				continue;
 			}
-			
+
 			$title = esc_html(get_the_title($post->ID));
-			
+
 			$row_actions = '';
 			$can_edit = current_user_can( get_post_type_object( get_post_type($post->ID) )->cap->edit_post, $post->ID );
 			$post_type_object = get_post_type_object( get_post_type($post->ID));
@@ -171,17 +171,17 @@ class Post_Selection_Box {
 				$row_actions .= sprintf('<span class="edit"><a title="Edit this item" href="%s">Edit</a> | </span>', get_edit_post_link( $post->ID ));
 
 			if ( $post_type_object->publicly_queryable ) {
-				if ( ($can_edit || !in_array( $post->post_status, array( 'pending', 'draft', 'future' ) ) ) 
+				if ( ($can_edit || !in_array( $post->post_status, array( 'pending', 'draft', 'future' ) ) )
 					&& ( $post->post_status != 'trash') ) {
 					$row_actions .= sprintf('<span class="view"><a rel="permalink" title="View %s" href="%s">View</a></span>', esc_attr(get_the_title($post->ID)), esc_url(get_permalink($post->ID)));
 				}
 			}
-			
+
 			if($row_actions)
 				$title .= '<div class="psu-row-actions">'.$row_actions.'</div>';
-			
+
 			$title = apply_filters('post-selection-ui-row-title', $title, $post->ID, $this->name, $this->args);
-			$output .= "<tr data-post_id='{$post->ID}' data-permalink='".  get_permalink($post->ID) . "'>\n".
+			$output .= "<tr data-post_id='{$post->ID}' data-title='". esc_attr(get_the_title($post->ID)) ."' data-permalink='".  get_permalink($post->ID) . "'>\n".
 				"\t<td class='psu-col-create'><a href='#' title='Add'></a></td>".
 				"\t<td class='psu-col-title'>\n";
 			$output .= $title;
@@ -189,12 +189,12 @@ class Post_Selection_Box {
 		}
 		return $output;
 	}
-	
+
 	/**
 	 * Renders the s_rows for the selection box
 	 * @param array $post_ids
-	 * @return string 
-	 * 
+	 * @return string
+	 *
 	 * @todo look into pre-caching the posts all at once
 	 */
 	private function render_selected_rows($post_ids) {
@@ -203,9 +203,9 @@ class Post_Selection_Box {
 			if(!get_post($post_id)) {
 				continue;
 			}
-			
+
 			$title = esc_html( get_the_title( $post_id ) );
-			
+
 			$row_actions = '';
 			$can_edit = current_user_can( get_post_type_object( get_post_type($post_id) )->cap->edit_post, $post_id );
 			$post_type_object = get_post_type_object( get_post_type($post_id));
@@ -214,15 +214,15 @@ class Post_Selection_Box {
 				$row_actions .= sprintf('<span class="edit"><a title="Edit this item" href="%s">Edit</a> | </span>', get_edit_post_link( $post_id ));
 
 			if ( $post_type_object->publicly_queryable ) {
-				if ( ($can_edit || !in_array( get_post($post_id)->post_status, array( 'pending', 'draft', 'future' ) ) ) 
+				if ( ($can_edit || !in_array( get_post($post_id)->post_status, array( 'pending', 'draft', 'future' ) ) )
 					&& ( get_post($post_id)->post_status != 'trash') ) {
 					$row_actions .= sprintf('<span class="view"><a rel="permalink" title="View %s" href="%s">View</a></span>', esc_attr(get_the_title($post_id)), esc_url(get_permalink($post_id)));
 				}
 			}
-			
+
 			if($row_actions)
 				$title .= '<div class="psu-row-actions">'.$row_actions.'</div>';
-			
+
 			$title = apply_filters('post-selection-ui-row-title', $title, $post_id, $this->name, $this->args);
 
 			$output .= "<tr data-post_id='{$post_id}'>\n".
@@ -237,12 +237,12 @@ class Post_Selection_Box {
 		}
 		return $output;
 	}
-	
+
 	public function render_results($args) {
 		$wp_query = $this->get_addable_query($args);
 		$cpage = intval($wp_query->get('paged'));
 		$max_pages = intval($wp_query->max_num_pages);
-		
+
 		$output = "<table class='psu-results'>\n".
 			"\t<tbody>" . $this->render_addable_rows($wp_query) . "</tbody>\n".
 			"</table>".
@@ -257,7 +257,7 @@ class Post_Selection_Box {
 			"</div>\n";
 		return $output;
 	}
-	
+
 	public function render() {
 		ob_start();
 		?>
@@ -297,7 +297,7 @@ class Post_Selection_Box {
 						<input type="text" name="p2p_search" autocomplete="off" placeholder="Search Posts" />
 					</div>
 				</div>
-				
+
 				<div class="psu-tab-list tabs-panel" <?php echo ($this->args['infinite_scroll']) ? ' style="max-height: 270px; overflow: scroll"' : '' ; ?>>
 					<?php echo $this->render_results(array()); ?>
 
