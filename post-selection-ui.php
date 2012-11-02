@@ -86,7 +86,7 @@ class Post_Selection_UI {
 			$selected = array();
 		}
 
-		$psu_box = new Post_Selection_Box('foobar', array('post_type' => $args['post_type'], 'selected' => $selected, 'order' => $args['order'], 'orderby' => $args['orderby']));
+		$psu_box = new Post_Selection_Box('foobar', array('post_type' => $args['post_type'], 'selected' => $selected));
 
 		$response = new stdClass();
 		$response->rows = $psu_box->render_results($args);

@@ -109,6 +109,8 @@
 				data.exclude = $selectedIDs.val();
 				data.order = order;
 				data.orderby = orderby;
+				console.log(order);
+				console.log(orderby);
 				return $.getJSON(ajaxurl + '?' + $.param(data), callback);
 			}
 			
