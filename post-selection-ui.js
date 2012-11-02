@@ -3,7 +3,7 @@
 	$.fn.post_selection_ui = function() {
 		
 		return this.each(function() {
-			var $selectedIDs, $selectionBox, $selectedPosts, $spinner, autoload, max_posts, is_full, post_type, update_box, ajax_request, add_post, remove_all_posts, remove_post, switch_to_tab, PostsTab, searchTab, listTab, $searchInput;
+			var $selectedIDs, $selectionBox, $selectedPosts, $spinner, order, orderby, autoload, max_posts, is_full, post_type, update_box, ajax_request, add_post, remove_all_posts, remove_post, switch_to_tab, PostsTab, searchTab, listTab, $searchInput;
 			
 			$selectionBox = $(this);
 			$thisID = $selectionBox.attr('id');
@@ -15,6 +15,8 @@
 			max_posts = parseInt($selectionBox.data('cardinality'));
 			post_type = $selectionBox.data('post_type');
 			autoload = Boolean($selectionBox.data('infinite-scroll'));
+			order = $selectionBox.data('order');
+			orderby = $selectionBox.data('orderby');
 						
 			$selectionBox.addClass('psu-active');
 			
@@ -105,6 +107,8 @@
 				data._ajax_nonce = PostSelectionUI.nonce;
 				data.post_type = post_type;
 				data.exclude = $selectedIDs.val();
+				data.order = order;
+				data.orderby = orderby;
 				return $.getJSON(ajaxurl + '?' + $.param(data), callback);
 			}
 			
