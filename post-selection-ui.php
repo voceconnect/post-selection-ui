@@ -170,8 +170,8 @@ class Post_Selection_Box {
 			$title = esc_html(get_the_title($post->ID));
 
 			$row_actions = '';
-			$can_edit = current_user_can( get_post_type_object( get_post_type($post->ID) )->cap->edit_post, $post->ID );
 			$post_type_object = get_post_type_object( get_post_type($post->ID));
+			$can_edit = current_user_can( $post_type_object->cap->edit_post, $post->ID );
 
 			if( $can_edit )
 				$row_actions .= sprintf('<span class="edit"><a title="Edit this item" href="%s">Edit</a> | </span>', get_edit_post_link( $post->ID ));
@@ -206,7 +206,7 @@ class Post_Selection_Box {
 	private function render_selected_rows($post_ids) {
 		$output = '';
 		foreach($post_ids as $post_id) {
-			if(!get_post($post_id)) {
+			if(!$post_id || !get_post($post_id)) {
 				continue;
 			}
 
