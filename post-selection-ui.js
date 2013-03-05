@@ -142,7 +142,7 @@
 					this.current_page = this.tab.find('.psu-current').data('num') || 1;
 					this.total_pages = this.tab.find('.psu-total').data('num') || 1;
 					
-					if( autoload ){
+					if( autoload && this.tab.hasClass('psu-tab-list') ){
 						this.tab.find('.psu-next').remove();
 						this.tab.find('.psu-prev').remove();						
 
