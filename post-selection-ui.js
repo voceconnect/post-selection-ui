@@ -195,7 +195,7 @@
 						return this.tab.append($('<div class="psu-notice">').html(response.msg));
 					}					
 
-					if ( autoload ){
+					if ( autoload && this.tab.hasClass('psu-tab-list') ){
 						this.tab.find('.psu-navigation, .psu-notice').remove();
 						this.tab.append('<hr/>' + response.rows);
 					} else {
