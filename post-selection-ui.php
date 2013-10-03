@@ -117,6 +117,7 @@ class Post_Selection_Box {
 			'sortable' => true,
 			'orderby' => 'date',
 			'order' => 'DESC',
+			'tax_query' => array(),
 			'infinite_scroll' => true
 		);
 		$args = wp_parse_args($args, $defaults);
@@ -150,6 +151,9 @@ class Post_Selection_Box {
 			'orderby' => $this->args['orderby'],
 			'order' => $this->args['order']
 		);
+
+		if( !empty( $this->args['tax_query'] ) )
+			$defaults['tax_query'] = $this->args['tax_query'];
 
 		$query_args = wp_parse_args($args, $defaults);
 		return new WP_Query($query_args);
