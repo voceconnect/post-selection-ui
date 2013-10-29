@@ -2,7 +2,6 @@
     "name": "voceconnect/post-selection-ui",
     "description": "A WordPress library to display a user interface to easily select posts from any post type",
     "license": "GPLv2+",
-    "version": "1.0.0",
     "authors": [
         {
             "name": "Michael Pretty",
@@ -10,6 +9,6 @@
         }
     ],
     "autoload": {
-        "files": ["post-selection-ui.php"]
+        "classmap": ["post-selection-ui.php"]
     }
 }
