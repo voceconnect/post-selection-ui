@@ -9,6 +9,6 @@
         }
     ],
     "autoload": {
-        "classmap": ["post-selection-ui.php"]
+        "files": ["post-selection-ui.php"]
     }
 }
