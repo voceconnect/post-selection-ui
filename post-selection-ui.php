@@ -7,6 +7,7 @@ Author: prettyboymp
 Plugin URI: http://voceconnect.com
 
 */
+if( !class_exists('Post_Selection_UI') ){
 
 class Post_Selection_UI {
 
@@ -319,4 +320,6 @@ class Post_Selection_Box {
 		<?php
 		return ob_get_clean();
 	}
+}
+
 }
