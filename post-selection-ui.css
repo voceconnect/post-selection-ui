@@ -6,6 +6,10 @@
 	margin-bottom: 8px;
 }
 
+.psu-box {
+	padding: 10px;
+}
+
 /* Tabs */
 
 .psu-box .tabs-panel {
