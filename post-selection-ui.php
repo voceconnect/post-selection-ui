@@ -87,7 +87,14 @@ class Post_Selection_UI {
 			$selected = array();
 		}
 
-		$psu_box = new Post_Selection_Box('foobar', array('post_type' => $args['post_type'], 'selected' => $selected));
+		$name = 'foobar';
+		if ( !empty($_GET['name']) ) {
+			$_name = sanitize_text_field($_GET['name']);
+			if ($_name)
+				$name = $_name;
+		}
+
+		$psu_box = new Post_Selection_Box($name, array('post_type' => $args['post_type'], 'selected' => $selected));
 
 		$response = new stdClass();
 		$response->rows = $psu_box->render_results($args);
@@ -125,6 +132,7 @@ class Post_Selection_Box {
 		$args['selected'] = array_map('intval', $args['selected']);
 
 		$args['post_type'] = (array) $args['post_type'];
+		$args['post_status'] = (array) $args['post_type'];
 
 		if(count($args['post_type']) > 1) {
 			$default_labels = array(
@@ -272,7 +280,7 @@ class Post_Selection_Box {
 	public function render() {
 		ob_start();
 		?>
-<div id="<?php echo esc_attr($this->args['id'] )?>" class="psu-box" data-infinite-scroll="<?php echo ($this->args['infinite_scroll']) ? 'true' : 'false' ; ?>" data-post_type='<?php echo esc_attr(implode(',', $this->args['post_type'])) ?>' data-cardinality='<?php echo $this->args['limit'] ?>' data-order="<?php echo $this->args['order'] ?>" data-orderby="<?php echo $this->args['orderby'] ?>">
+		<div id="<?php echo esc_attr($this->args['id'] )?>" class="psu-box" data-infinite-scroll="<?php echo ($this->args['infinite_scroll']) ? 'true' : 'false' ; ?>" data-post_type='<?php echo esc_attr(implode(',', $this->args['post_type'])) ?>' data-post_status="<?php echo esc_attr(implode(',',$this->args['post_status'])); ?>" data-cardinality='<?php echo $this->args['limit'] ?>' data-order="<?php echo $this->args['order'] ?>" data-orderby="<?php echo $this->args['orderby'] ?>">
 			<input type="hidden" name="<?php echo esc_attr($this->name); ?>" value="<?php echo join(',', $this->args['selected']) ?>" />
 			<table class="psu-selected" >
 				<?php if($this->args['limit'] != 1): ?>
