@@ -80,6 +80,9 @@ class Post_Selection_UI {
 		if(!empty($_GET['orderby'])){
 			$args['orderby'] = $_GET['orderby'];
 		}
+		if( !empty($_GET['post_status']) && ( in_array($_GET['post_status'], array_keys(get_post_statuses())) || $_GET['post_status'] === 'inherit' ) ){
+			$args['post_status'] = $_GET['post_status'];
+		}
 
 		if(!empty($_GET['exclude'])) {
 			$selected = array_map('intval', explode(',', $_GET['exclude']));
@@ -132,7 +135,7 @@ class Post_Selection_Box {
 		$args['selected'] = array_map('intval', $args['selected']);
 
 		$args['post_type'] = (array) $args['post_type'];
-		$args['post_status'] = (array) $args['post_type'];
+		$args['post_status'] = (array) $args['post_status'];
 
 		if(count($args['post_type']) > 1) {
 			$default_labels = array(
