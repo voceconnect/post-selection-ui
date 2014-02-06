@@ -72,7 +72,7 @@ class Post_Selection_UI {
 		if (!empty($_GET['paged'])) {
 			$args['paged'] = absint($_GET['paged']);
 		}
-		if (!empty($_GET['s'])){
+		if (!empty($_GET['s'])) {
 			$args['s'] = $_GET['s'];
 		}
 		if (!empty($_GET['order'])) {
