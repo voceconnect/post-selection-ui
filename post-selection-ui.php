@@ -57,7 +57,7 @@ class Post_Selection_UI {
 			'post_type' => array()
 		);
 
-		if(!empty($_GET['post_type']) ) {
+		if (!empty($_GET['post_type']) ) {
 			$unsanitized_post_types = array_map('sanitize_key', explode(',', $_GET['post_type']));
 			foreach($unsanitized_post_types as $post_type) {
 			 if(($post_type_obj = get_post_type_object( $post_type )) && current_user_can($post_type_obj->cap->read)) {
@@ -66,37 +66,40 @@ class Post_Selection_UI {
 			}
 		}
 
-		if(count($args['post_type']) < 1)
+		if (count($args['post_type']) < 1) {
 			die('-1');
-
-		if(!empty($_GET['paged']))
+		}
+		if (!empty($_GET['paged'])) {
 			$args['paged'] = absint($_GET['paged']);
-
-		if(!empty($_GET['s']))
+		}
+		if (!empty($_GET['s'])){
 			$args['s'] = $_GET['s'];
-
-		if(!empty($_GET['order']))
+		}
+		if (!empty($_GET['order'])) {
 			$args['order'] = $_GET['order'];
-
-		if(!empty($_GET['orderby']))
+		}
+		if (!empty($_GET['orderby'])) {
 			$args['orderby'] = $_GET['orderby'];
-
-		if( !empty($_GET['post_status']) && ( in_array($_GET['post_status'], array_keys(get_post_statuses())) || $_GET['post_status'] === 'inherit' ) )
+		}
+		if ( !empty($_GET['post_status']) && ( in_array($_GET['post_status'], array_keys(get_post_statuses())) || $_GET['post_status'] === 'inherit' ) ) {
 			$args['post_status'] = $_GET['post_status'];
-
-		if ( !empty($_GET['include']) )
+		}
+		if ( !empty($_GET['include']) ) {
 			$args['post__in'] = array_filter(array_map('intval',explode(',', $_GET['include'])));
+		}
 
-		if(!empty($_GET['exclude']))
+		if (!empty($_GET['exclude'])) {
 			$selected = array_map('intval', explode(',', $_GET['exclude']));
-		else
+		} else {
 			$selected = array();
+		}
 
 		$name = 'foobar';
 		if ( !empty($_GET['name']) ) {
 			$_name = sanitize_text_field($_GET['name']);
-			if ($_name)
+			if ($_name) {
 				$name = $_name;
+			}
 		}
 
 		$psu_box = new Post_Selection_Box($name, array('post_type' => $args['post_type'], 'selected' => $selected));
@@ -141,7 +144,7 @@ class Post_Selection_Box {
 		$args['post_type'] = (array) $args['post_type'];
 		$args['post_status'] = (array) $args['post_status'];
 
-		if(count($args['post_type']) > 1) {
+		if (count($args['post_type']) > 1) {
 			$default_labels = array(
 				'name' => 'Items',
 				'singular_name' => 'Item',
@@ -168,11 +171,13 @@ class Post_Selection_Box {
 			'order' => $this->args['order']
 		);
 
-		if( !empty( $this->args['tax_query'] ) )
+		if ( !empty( $this->args['tax_query'] ) ) {
 			$defaults['tax_query'] = $this->args['tax_query'];
+		}
 
-		if ( !empty( $this->args['post__in'] ) )
+		if ( !empty( $this->args['post__in'] ) ) {
 			$defaults['post__in'] = $this->args['post__in'];
+		}
 
 		$query_args = wp_parse_args($args, $defaults);
 		return new WP_Query($query_args);
@@ -186,7 +191,7 @@ class Post_Selection_Box {
 	public function render_addable_rows($wp_query) {
 		$output = '';
 		foreach($wp_query->posts as $post) {
-			if(!get_post($post->ID)) {
+			if (!get_post($post->ID)) {
 				continue;
 			}
 
@@ -196,8 +201,9 @@ class Post_Selection_Box {
 			$post_type_object = get_post_type_object( get_post_type($post->ID));
 			$can_edit = current_user_can( $post_type_object->cap->edit_post, $post->ID );
 
-			if( $can_edit )
+			if ( $can_edit ) {
 				$row_actions .= sprintf('<span class="edit"><a title="Edit this item" href="%s">Edit</a> | </span>', get_edit_post_link( $post->ID ));
+			}
 
 			if ( $post_type_object->publicly_queryable ) {
 				if ( ($can_edit || !in_array( $post->post_status, array( 'pending', 'draft', 'future' ) ) )
@@ -206,8 +212,9 @@ class Post_Selection_Box {
 				}
 			}
 
-			if($row_actions)
+			if ($row_actions) {
 				$title .= '<div class="psu-row-actions">'.$row_actions.'</div>';
+			}
 
 			$title = apply_filters('post-selection-ui-row-title', $title, $post->ID, $this->name, $this->args);
 			$output .= "<tr data-post_id='{$post->ID}' data-title='". esc_attr(get_the_title($post->ID)) ."' data-permalink='".  get_permalink($post->ID) . "'>\n".
@@ -229,7 +236,7 @@ class Post_Selection_Box {
 	private function render_selected_rows($post_ids) {
 		$output = '';
 		foreach($post_ids as $post_id) {
-			if(!$post_id || !get_post($post_id)) {
+			if (!$post_id || !get_post($post_id)) {
 				continue;
 			}
 
@@ -239,8 +246,9 @@ class Post_Selection_Box {
 			$can_edit = current_user_can( get_post_type_object( get_post_type($post_id) )->cap->edit_post, $post_id );
 			$post_type_object = get_post_type_object( get_post_type($post_id));
 
-			if( $can_edit )
+			if ( $can_edit ) {
 				$row_actions .= sprintf('<span class="edit"><a title="Edit this item" href="%s">Edit</a> | </span>', get_edit_post_link( $post_id ));
+			}
 
 			if ( $post_type_object->publicly_queryable ) {
 				if ( ($can_edit || !in_array( get_post($post_id)->post_status, array( 'pending', 'draft', 'future' ) ) )
@@ -249,8 +257,9 @@ class Post_Selection_Box {
 				}
 			}
 
-			if($row_actions)
+			if ($row_actions) {
 				$title .= '<div class="psu-row-actions">'.$row_actions.'</div>';
+			}
 
 			$title = apply_filters('post-selection-ui-row-title', $title, $post_id, $this->name, $this->args);
 
