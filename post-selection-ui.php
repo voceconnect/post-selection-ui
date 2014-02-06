@@ -65,40 +65,38 @@ class Post_Selection_UI {
 			 }
 			}
 		}
+
 		if(count($args['post_type']) < 1)
 			die('-1');
 
-		if(!empty($_GET['paged'])) {
+		if(!empty($_GET['paged']))
 			$args['paged'] = absint($_GET['paged']);
-		}
-		if(!empty($_GET['s'])) {
-			$args['s'] = $_GET['s'];
-		}
-		if(!empty($_GET['order'])){
-			$args['order'] = $_GET['order'];
-		}
-		if(!empty($_GET['orderby'])){
-			$args['orderby'] = $_GET['orderby'];
-		}
-		if( !empty($_GET['post_status']) && ( in_array($_GET['post_status'], array_keys(get_post_statuses())) || $_GET['post_status'] === 'inherit' ) ){
-			$args['post_status'] = $_GET['post_status'];
-		}
 
-		if(!empty($_GET['exclude'])) {
+		if(!empty($_GET['s']))
+			$args['s'] = $_GET['s'];
+
+		if(!empty($_GET['order']))
+			$args['order'] = $_GET['order'];
+
+		if(!empty($_GET['orderby']))
+			$args['orderby'] = $_GET['orderby'];
+
+		if( !empty($_GET['post_status']) && ( in_array($_GET['post_status'], array_keys(get_post_statuses())) || $_GET['post_status'] === 'inherit' ) )
+			$args['post_status'] = $_GET['post_status'];
+
+		if ( !empty($_GET['include']) )
+			$args['post__in'] = array_filter(array_map('intval',explode(',', $_GET['include'])));
+
+		if(!empty($_GET['exclude']))
 			$selected = array_map('intval', explode(',', $_GET['exclude']));
-		} else {
+		else
 			$selected = array();
-		}
 
 		$name = 'foobar';
 		if ( !empty($_GET['name']) ) {
 			$_name = sanitize_text_field($_GET['name']);
 			if ($_name)
 				$name = $_name;
-		}
-
-		if ( !empty($_GET['include']) ) {
-			$args['post__in'] = array_filter(array_map('intval',explode(',', $_GET['include'])));
 		}
 
 		$psu_box = new Post_Selection_Box($name, array('post_type' => $args['post_type'], 'selected' => $selected));
@@ -133,10 +131,12 @@ class Post_Selection_Box {
 			'orderby' => 'date',
 			'order' => 'DESC',
 			'tax_query' => array(),
-			'infinite_scroll' => true
+			'infinite_scroll' => true,
+			'post__in' => array()
 		);
 		$args = wp_parse_args($args, $defaults);
-		$args['selected'] = array_map('intval', $args['selected']);
+		$args['selected'] = array_filter(array_map('intval', $args['selected']));
+		$args['post__in'] = array_filter(array_map('intval', $args['post__in']));
 
 		$args['post_type'] = (array) $args['post_type'];
 		$args['post_status'] = (array) $args['post_status'];
@@ -289,15 +289,21 @@ class Post_Selection_Box {
 
 	public function render() {
 		ob_start();
+		$data = array(
+			'post-in'         => implode(',',$this->args['post__in']),
+			'infinite-scroll' => (bool) $this->args['infinite_scroll'],
+			'post_type'       => implode(',', $this->args['post_type']),
+			'post_status'     => implode(',',$this->args['post_status']),
+			'cardinality'     => $this->args['limit'],
+			'order'           => $this->args['order'],
+			'orderby'         => $this->args['orderby'],
+		);
+		$data_atts = array();
+		foreach ( $data as $key => $value ) {
+			$data_atts[] = sprintf( 'data-%s="%s"', $key, esc_attr($value) );
+		}
 		?>
-		<div id="<?php echo esc_attr($this->args['id'] )?>" class="psu-box"
-			data-post-in="<?php echo esc_attr(implode(',',$this->args['post__in'])); ?>"
-			data-infinite-scroll="<?php echo ($this->args['infinite_scroll']) ? 'true' : 'false' ; ?>"
-			data-post_type='<?php echo esc_attr(implode(',', $this->args['post_type'])) ?>'
-			data-post_status="<?php echo esc_attr(implode(',',$this->args['post_status'])); ?>"
-			data-cardinality='<?php echo $this->args['limit'] ?>'
-			data-order="<?php echo $this->args['order'] ?>"
-			data-orderby="<?php echo $this->args['orderby'] ?>">
+		<div id="<?php echo esc_attr($this->args['id'] )?>" class="psu-box" <?php echo implode(' ', $data_atts); ?>>
 			<input type="hidden" name="<?php echo esc_attr($this->name); ?>" value="<?php echo join(',', $this->args['selected']) ?>" />
 			<table class="psu-selected" >
 				<?php if($this->args['limit'] != 1): ?>
