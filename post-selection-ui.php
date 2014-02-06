@@ -97,6 +97,10 @@ class Post_Selection_UI {
 				$name = $_name;
 		}
 
+		if ( !empty($_GET['include']) ) {
+			$args['post__in'] = array_filter(array_map('intval',explode(',', $_GET['include'])));
+		}
+
 		$psu_box = new Post_Selection_Box($name, array('post_type' => $args['post_type'], 'selected' => $selected));
 
 		$response = new stdClass();
@@ -166,6 +170,9 @@ class Post_Selection_Box {
 
 		if( !empty( $this->args['tax_query'] ) )
 			$defaults['tax_query'] = $this->args['tax_query'];
+
+		if ( !empty( $this->args['post__in'] ) )
+			$defaults['post__in'] = $this->args['post__in'];
 
 		$query_args = wp_parse_args($args, $defaults);
 		return new WP_Query($query_args);
@@ -283,7 +290,14 @@ class Post_Selection_Box {
 	public function render() {
 		ob_start();
 		?>
-		<div id="<?php echo esc_attr($this->args['id'] )?>" class="psu-box" data-infinite-scroll="<?php echo ($this->args['infinite_scroll']) ? 'true' : 'false' ; ?>" data-post_type='<?php echo esc_attr(implode(',', $this->args['post_type'])) ?>' data-post_status="<?php echo esc_attr(implode(',',$this->args['post_status'])); ?>" data-cardinality='<?php echo $this->args['limit'] ?>' data-order="<?php echo $this->args['order'] ?>" data-orderby="<?php echo $this->args['orderby'] ?>">
+		<div id="<?php echo esc_attr($this->args['id'] )?>" class="psu-box"
+			data-post-in="<?php echo esc_attr(implode(',',$this->args['post__in'])); ?>"
+			data-infinite-scroll="<?php echo ($this->args['infinite_scroll']) ? 'true' : 'false' ; ?>"
+			data-post_type='<?php echo esc_attr(implode(',', $this->args['post_type'])) ?>'
+			data-post_status="<?php echo esc_attr(implode(',',$this->args['post_status'])); ?>"
+			data-cardinality='<?php echo $this->args['limit'] ?>'
+			data-order="<?php echo $this->args['order'] ?>"
+			data-orderby="<?php echo $this->args['orderby'] ?>">
 			<input type="hidden" name="<?php echo esc_attr($this->name); ?>" value="<?php echo join(',', $this->args['selected']) ?>" />
 			<table class="psu-selected" >
 				<?php if($this->args['limit'] != 1): ?>

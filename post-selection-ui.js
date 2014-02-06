@@ -3,7 +3,7 @@
 	$.fn.post_selection_ui = function() {
 
 		return this.each(function() {
-			var $selectedIDs, $selectionBox, $selectedPosts, $spinner, order, orderby, autoload, max_posts, is_full, post_type, post_status, update_box, ajax_request, add_post, remove_all_posts, remove_post, switch_to_tab, PostsTab, searchTab, listTab, $searchInput, name;
+			var $selectedIDs, $selectionBox, $selectedPosts, $spinner, postIn, order, orderby, autoload, max_posts, is_full, post_type, post_status, update_box, ajax_request, add_post, remove_all_posts, remove_post, switch_to_tab, PostsTab, searchTab, listTab, $searchInput, name;
 
 			$selectionBox = $(this);
 			$thisID = $selectionBox.attr('id');
@@ -19,6 +19,7 @@
 			order = $selectionBox.data('order');
 			orderby = $selectionBox.data('orderby');
 			name = $selectedIDs.attr('name');
+			postIn = $selectionBox.data('post-in');
 
 			$selectionBox.addClass('psu-active');
 
@@ -113,6 +114,7 @@
 				data.orderby = orderby;
 				data.post_status = post_status;
 				data.name = name;
+				data.include = postIn;
 				return $.getJSON(ajaxurl + '?' + $.param(data), callback);
 			}
 
