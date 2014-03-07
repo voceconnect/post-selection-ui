@@ -180,6 +180,7 @@ class Post_Selection_Box {
 		}
 
 		$query_args = wp_parse_args($args, $defaults);
+		$query_args = apply_filters( 'psu_modify_query_args', $query_args, $this->name );		
 		return new WP_Query($query_args);
 	}
 
@@ -277,6 +278,7 @@ class Post_Selection_Box {
 	}
 
 	public function render_results($args) {
+		$args = apply_filters( 'post_selection_ui_render_results_args', $args );
 		$wp_query = $this->get_addable_query($args);
 		$cpage = intval($wp_query->get('paged'));
 		$max_pages = intval($wp_query->max_num_pages);
