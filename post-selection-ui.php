@@ -180,6 +180,7 @@ class Post_Selection_Box {
 		}
 
 		$query_args = wp_parse_args($args, $defaults);
+		$query_args = apply_filters( 'psu_modify_query_args', $query_args, $this->name );		
 		return new WP_Query($query_args);
 	}
 
