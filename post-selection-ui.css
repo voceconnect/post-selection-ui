@@ -6,17 +6,34 @@
 	margin-bottom: 8px;
 }
 
-.psu-box {
-	padding: 10px;
+.form-table .psu-box {
+	border:1px solid #dfdfdf;
+}
+
+.psu-box table.psu-selected {
+    border-collapse: collapse;
+}
+
+.psu-box table.psu-selected,
+.psu-box table.psu-selected tr {
+	border:1px solid #dfdfdf;
+}
+
+.psu-box table.psu-selected thead {
+	background:#f9f9f9;
+}
+
+.psu-add-posts {
+	padding:10px;
 }
 
 /* Tabs */
 
 .psu-box .tabs-panel {
-	border-width: 1px;
-	border-style: solid;
+	border: 1px solid #dfdfdf;
 	display: block;
 	padding: 10px;
+	background-color:#fff;
 }
 
 .psu-box .psu-tab-search {
@@ -31,8 +48,8 @@
 
 .psu-results,
 .psu-connections {
-	background-color: #F9F9F9;
-	border-color: #DFDFDF;
+	background-color: #f9f9f9;
+	border-color: #dfdfdf;
 	border-radius: 3px;
 	border-spacing: 0;
 	border-style: solid;
@@ -48,7 +65,7 @@
 
 .psu-results td,
 .psu-connections td {
-	border-top: 1px solid #DFDFDF;
+	border-top: 1px solid #dfdfdf;
 }
 
 .psu-connections th,
@@ -81,7 +98,7 @@ th.psu-col-delete a {
 }
 
 .psu-connections th {
-	background-color: #F1F1F1;
+	background-color: #f1f1f1;
 	text-align: left;
 }
 
@@ -93,6 +110,10 @@ th.psu-col-delete a {
 .psu-col-delete,
 .psu-col-order {
 	width: 16px !important;
+}
+
+.psu-col-order {
+	padding-right:10px;
 }
 
 .psu-col-create a,

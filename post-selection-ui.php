@@ -247,13 +247,13 @@ class Post_Selection_Box {
 			$post_type_object = get_post_type_object( get_post_type($post_id));
 
 			if ( $can_edit ) {
-				$row_actions .= sprintf('<span class="edit"><a title="Edit this item" href="%s">Edit</a> | </span>', get_edit_post_link( $post_id ));
+				$row_actions .= sprintf('<span class="edit"><a title="Edit this item" href="%s">Edit</a></span>', get_edit_post_link( $post_id ));
 			}
 
 			if ( $post_type_object->publicly_queryable ) {
 				if ( ($can_edit || !in_array( get_post($post_id)->post_status, array( 'pending', 'draft', 'future' ) ) )
 					&& ( get_post($post_id)->post_status != 'trash') ) {
-					$row_actions .= sprintf('<span class="view"><a rel="permalink" title="View %s" href="%s">View</a></span>', esc_attr(get_the_title($post_id)), esc_url(get_permalink($post_id)));
+					$row_actions .= sprintf('| <span class="view"><a rel="permalink" title="View %s" href="%s">View</a></span>', esc_attr(get_the_title($post_id)), esc_url(get_permalink($post_id)));
 				}
 			}
 
