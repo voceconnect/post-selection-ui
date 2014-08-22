@@ -289,7 +289,8 @@
 	}
 
 	//work around for first creation of widget
-	if(typeof(wpWidgets) === 'object') {
+	if ( ( 'object' === typeof wpWidgets ) && ( 'function' === typeof wpWidgets.fixLabels ) ) {
+
 		var oldSave = __bind(wpWidgets, wpWidgets.fixLabels);
 
 		wpWidgets.fixLabels = function(widget) {
@@ -299,5 +300,17 @@
 			}
 			widget.find('.psu-box').post_selection_ui();
 		};
+
+	} else  {
+
+		$( document ).on( 'widget-added', function( e, $widget ) {
+
+			$psu = $widget.find( '.psu-box' );
+
+			$psu.length && $psu.post_selection_ui();
+
+		} );
+
 	}
+
 })(jQuery);
