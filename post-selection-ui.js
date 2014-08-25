@@ -288,6 +288,14 @@
 		$('.psu-box').post_selection_ui();
 	}
 
+	function initPostSelectionUIOnEvent( e, widget ) {
+
+		$psu = widget.find( '.psu-box' );
+
+		$psu.length && $psu.post_selection_ui();
+
+	}
+
 	//work around for first creation of widget
 	if ( ( 'object' === typeof wpWidgets ) && ( 'function' === typeof wpWidgets.fixLabels ) ) {
 
@@ -298,18 +306,12 @@
 			if(typeof console != 'undefined'){
 				console.log(widget);
 			}
-			widget.find('.psu-box').post_selection_ui();
+			initPostSelectionUIOnEvent( null, widget );
 		};
 
 	} else  {
 
-		$( document ).on( 'widget-added', function( e, $widget ) {
-
-			$psu = $widget.find( '.psu-box' );
-
-			$psu.length && $psu.post_selection_ui();
-
-		} );
+		$( document ).on( 'widget-added widget-updated', initPostSelectionUIOnEvent );
 
 	}
 
