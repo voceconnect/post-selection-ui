@@ -297,22 +297,35 @@
 	}
 
 	//work around for first creation of widget
-	if ( ( 'object' === typeof wpWidgets ) && ( 'function' === typeof wpWidgets.fixLabels ) ) {
+	if ( ( 'object' === typeof wpWidgets ) && ( 'function' === typeof wpWidgets.appendTitle ) ) {
 
-		var oldSave = __bind(wpWidgets, wpWidgets.fixLabels);
+		var oldAppendTitle = __bind(wpWidgets, wpWidgets.appendTitle);
 
-		wpWidgets.fixLabels = function(widget) {
-			oldSave(widget);
-			if(typeof console != 'undefined'){
-				console.log(widget);
+		wpWidgets.appendTitle = function(widget) {
+			oldAppendTitle(widget);
+			if ( ( 'object' === typeof widget ) && ( 'function' === typeof widget.find ) ) {
+				initPostSelectionUIOnEvent( null, widget );
 			}
-			initPostSelectionUIOnEvent( null, widget );
+
 		};
 
-	} else  {
+	}
 
-		$( document ).on( 'widget-added widget-updated', initPostSelectionUIOnEvent );
+	//work around for rebuilding of widget
+	if ( ( 'object' === typeof wpWidgets ) && ( 'function' === typeof wpWidgets.save ) ) {
+
+		var oldSave = __bind(wpWidgets, wpWidgets.save);
+
+		wpWidgets.save = function(widget, del, animate, order) {
+			oldSave(widget, del, animate, order);
+			if ( ( 'object' === typeof widget ) && ( 'function' === typeof widget.find ) ) {
+				initPostSelectionUIOnEvent( null, widget );
+			}
+
+
+		};
 
 	}
+	$( document ).on( 'widget-added widget-updated', initPostSelectionUIOnEvent );
 
 })(jQuery);
