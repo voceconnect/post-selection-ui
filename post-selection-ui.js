@@ -296,22 +296,54 @@
 
 	}
 
+	// get wordpress version
+	var wpVersion = null;
+	if ( parseInt( PostSelectionUI.wpVersion ) === 4 ) {
+
+		wpVersion = 4;
+
+	} else {
+
+		var versionSplit = PostSelectionUI.wpVersion.split('.');
+		wpVersion = parseFloat( parseInt( versionSplit[0] ) + ( parseInt( versionSplit[1] ) / 10 ) );
+
+	}
+
 	//work around for first creation of widget
-	if ( ( 'object' === typeof wpWidgets ) && ( 'function' === typeof wpWidgets.fixLabels ) ) {
-
-		var oldSave = __bind(wpWidgets, wpWidgets.fixLabels);
-
-		wpWidgets.fixLabels = function(widget) {
-			oldSave(widget);
-			if(typeof console != 'undefined'){
-				console.log(widget);
-			}
-			initPostSelectionUIOnEvent( null, widget );
-		};
-
-	} else  {
+	if ( wpVersion >= 3.9 ) {
 
 		$( document ).on( 'widget-added widget-updated', initPostSelectionUIOnEvent );
+
+	} else {
+
+		if ( ( 'object' === typeof wpWidgets ) && ( 'function' === typeof wpWidgets.appendTitle ) ) {
+
+				var oldAppendTitle = __bind(wpWidgets, wpWidgets.appendTitle);
+
+				wpWidgets.appendTitle = function(widget) {
+					oldAppendTitle(widget);
+					if ( ( 'object' === typeof widget ) && ( 'function' === typeof widget.find ) ) {
+						initPostSelectionUIOnEvent( null, widget );
+					}
+
+				};
+
+			}
+
+		//work around for rebuilding of widget
+		if ( ( 'object' === typeof wpWidgets ) && ( 'function' === typeof wpWidgets.save ) ) {
+
+			var oldSave = __bind(wpWidgets, wpWidgets.save);
+
+			wpWidgets.save = function (widget, del, animate, order) {
+				oldSave(widget, del, animate, order);
+				if (( 'object' === typeof widget ) && ( 'function' === typeof widget.find )) {
+					initPostSelectionUIOnEvent(null, widget);
+				}
+
+
+			};
+		}
 
 	}
 

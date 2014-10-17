@@ -24,6 +24,7 @@ class Post_Selection_UI {
 			'nonce' => wp_create_nonce( 'psu_search' ),
 			'spinner' => admin_url( 'images/wpspin_light.gif' ),
 			'clearConfirmMessage' => __( 'Are you sure you want to clear the selected items?' ),
+			'wpVersion' => get_bloginfo( 'version' )
 		) );
 
 	}
