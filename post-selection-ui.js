@@ -54,7 +54,8 @@
 				var psu_item_selected_event = jQuery.Event('psu_item_selected');
 				$selectionBox.trigger(psu_item_selected_event, [{post_id : $tr.data('post_id'), target : $tr}]);
 				if(!psu_item_selected_event.isDefaultPrevented() ) {
-					$tr.appendTo($selectedPosts).append('<td class="psu-col-order">&nbsp;</td>')
+                    var handle = $selectedPosts.find('tbody.sortable').length ? '<td class="psu-col-order">&nbsp;</td>' : '';
+					$tr.appendTo($selectedPosts).append(handle)
 					.find('td.psu-col-create').removeClass('psu-col-create').addClass('psu-col-delete')
 					.find('a').attr('title', 'Remove');
 
@@ -118,7 +119,7 @@
 				return $.getJSON(ajaxurl + '?' + $.param(data), callback);
 			}
 
-			$selectedPosts.find('tbody').sortable({
+			$selectedPosts.find('tbody.sortable').sortable({
 				handle: 'td.psu-col-order',
 				helper: function(e, ui){
 					ui.children().each(function(){

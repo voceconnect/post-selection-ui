@@ -2,8 +2,8 @@
 /*
 Plugin Name: Post Selection UI
 Description: An extraction of the post selection interface from the posts-to-posts plugin
-Version: 1.0.9
-Author: prettyboymp
+Version: 1.0.10
+Author: prettyboymp, banderon
 Plugin URI: http://voceconnect.com
 
 */
@@ -326,7 +326,7 @@ class Post_Selection_Box {
 					</tr>
 				</thead>
 				<?php endif; ?>
-				<tbody>
+				<tbody class="<?php echo $this->args['sortable'] ? 'sortable' : ''; ?>">
 					<?php echo $this->render_selected_rows($this->args['selected']); ?>
 				</tbody>
 			</table>
