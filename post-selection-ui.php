@@ -336,7 +336,7 @@ class Post_Selection_Box {
 
 				<ul class="wp-tab-bar clearfix">
 					<?php
-					$html = '<li class="wp-tab-active" data-ref=".psu-tab-list"><a href="#">View All</a></li>';
+					$html  = '<li class="wp-tab-active" data-ref=".psu-tab-list"><a href="#">View All</a></li>';
 					$html .= '<li data-ref=".psu-tab-search"><a href="#">Search</a></li>';
 					$html = apply_filters('psu_tab_list', $html, $post_type = $this->args['post_type'][0]);
 					echo $html;
