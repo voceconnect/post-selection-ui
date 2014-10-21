@@ -29,21 +29,21 @@
 				'class': 'psu-spinner'
 			});
 
-            restore_post = function($tr){
-                $tr.find('.psu-col-order').remove();
-                $tr.find('td.psu-col-delete').addClass('psu-col-create').removeClass('psu-col-delete')
-                    .find('a').attr('title', 'Add');
+			restore_post = function($tr){
+				$tr.find('.psu-col-order').remove();
+				$tr.find('td.psu-col-delete').addClass('psu-col-create').removeClass('psu-col-delete')
+				   .find('a').attr('title', 'Add');
 
-                $selectionBox.find('table.psu-results tbody').append($tr);
-            }
+				$selectionBox.find('table.psu-results tbody').append($tr);
+			}
 
 			remove_all_posts = function(ev){
 				if (!confirm(PostSelectionUI.clearConfirmMessage))
 					return;
 
 				$selectedPosts.find('tbody tr').each(function(){
-                    restore_post($(this));
-                });
+					restore_post($(this));
+				});
 
 				update_box();
 				ev.preventDefault();
@@ -51,9 +51,9 @@
 
 			remove_post = function(ev){
 				var $self = $(ev.target),
-                    $tr = $self.closest('tr');
+					$tr = $self.closest('tr');
 
-                restore_post($tr);
+				restore_post($tr);
 
 				update_box();
 				ev.preventDefault();
