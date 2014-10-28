@@ -6,6 +6,10 @@
         {
             "name": "Michael Pretty",
             "email": "mpretty@voceconnect.com"
+        },
+        {
+            "name": "Gary Smirny",
+            "email": "gary@voceconnect.com"
         }
     ],
     "autoload": {

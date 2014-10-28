@@ -3,9 +3,10 @@
 	$.fn.post_selection_ui = function() {
 
 		return this.each(function() {
-			var $selectedIDs, $selectionBox, $selectedPosts, $spinner, postIn, order, orderby, autoload, max_posts, is_full, post_type, post_status, update_box, ajax_request, add_post, remove_all_posts, remove_post, switch_to_tab, PostsTab, searchTab, listTab, $searchInput, name;
+			var $selectedIDs, $selectionBox, $selectedPosts, $spinner, postIn, order, orderby, autoload, max_posts, is_full, post_type, post_status, update_box, ajax_request, add_post, restore_post, remove_all_posts, remove_post, switch_to_tab, PostsTab, searchTab, listTab, $searchInput, name;
 
 			$selectionBox = $(this);
+
 			$thisID = $selectionBox.attr('id');
 			if($selectionBox.hasClass('psu-active')){
 				return false;
@@ -28,18 +29,32 @@
 				'class': 'psu-spinner'
 			});
 
+			restore_post = function($tr){
+				$tr.find('.psu-col-order').remove();
+				$tr.find('td.psu-col-delete').addClass('psu-col-create').removeClass('psu-col-delete')
+				   .find('a').attr('title', 'Add');
+
+				$selectionBox.find('table.psu-results tbody').append($tr);
+			}
+
 			remove_all_posts = function(ev){
 				if (!confirm(PostSelectionUI.clearConfirmMessage))
 					return;
-				$selectedPosts.find('tbody').html('');
+
+				$selectedPosts.find('tbody tr').each(function(){
+					restore_post($(this));
+				});
+
 				update_box();
 				ev.preventDefault();
 			}
 
 			remove_post = function(ev){
-				var $self;
-				$self = $(ev.target);
-				$self.closest('tr').remove();
+				var $self = $(ev.target),
+					$tr = $self.closest('tr');
+
+				restore_post($tr);
+
 				update_box();
 				ev.preventDefault();
 			}
@@ -54,7 +69,8 @@
 				var psu_item_selected_event = jQuery.Event('psu_item_selected');
 				$selectionBox.trigger(psu_item_selected_event, [{post_id : $tr.data('post_id'), target : $tr}]);
 				if(!psu_item_selected_event.isDefaultPrevented() ) {
-					$tr.appendTo($selectedPosts).append('<td class="psu-col-order">&nbsp;</td>')
+					var handle = $selectedPosts.find('tbody.sortable').length ? '<td class="psu-col-order">&nbsp;</td>' : '';
+					$tr.appendTo($selectedPosts).append(handle)
 					.find('td.psu-col-create').removeClass('psu-col-create').addClass('psu-col-delete')
 					.find('a').attr('title', 'Remove');
 
@@ -118,7 +134,7 @@
 				return $.getJSON(ajaxurl + '?' + $.param(data), callback);
 			}
 
-			$selectedPosts.find('tbody').sortable({
+			$selectedPosts.find('tbody.sortable').sortable({
 				handle: 'td.psu-col-order',
 				helper: function(e, ui){
 					ui.children().each(function(){
