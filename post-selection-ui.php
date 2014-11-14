@@ -73,13 +73,13 @@ class Post_Selection_UI {
 			$args['paged'] = absint($_GET['paged']);
 		}
 		if (!empty($_GET['s'])){
-			$args['s'] = $_GET['s'];
+			$args['s'] = sanitize_text_field( $_GET['s'] );
 		}
-		if (!empty($_GET['order'])) {
+		if ( ! empty( $_GET['order'] ) && ( in_array( strtolower( $_GET['order'] ), array( 'asc', 'desc' ) ) ) ) {
 			$args['order'] = $_GET['order'];
 		}
 		if (!empty($_GET['orderby'])) {
-			$args['orderby'] = $_GET['orderby'];
+			$args['orderby'] = sanitize_text_field( $_GET['orderby'] );
 		}
 		if ( !empty($_GET['post_status']) && ( in_array($_GET['post_status'], array_keys(get_post_statuses())) || $_GET['post_status'] === 'inherit' || $_GET['post_status'] == 'any' ) ) {
 			$args['post_status'] = $_GET['post_status'];
@@ -266,7 +266,7 @@ class Post_Selection_Box {
 			$output .= "<tr data-post_id='{$post_id}'>\n".
 				"\t<td class='psu-col-delete'><a href='#' title='Remove'></a></td>".
 				"\t<td class='psu-col-title'>\n";
-			$output .= $title;
+			$output .= $title; //title escaped on line 243
 			$output .= "\n</td>\n";
 			if($this->args['sortable']) {
 				$output .= "\t<td class='psu-col-order'>&nbsp;</td>";
