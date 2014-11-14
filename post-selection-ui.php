@@ -266,7 +266,7 @@ class Post_Selection_Box {
 			$output .= "<tr data-post_id='{$post_id}'>\n".
 				"\t<td class='psu-col-delete'><a href='#' title='Remove'></a></td>".
 				"\t<td class='psu-col-title'>\n";
-			$output .= $title; //title escaped on line 243
+			$output .= wp_kses_post( $title );
 			$output .= "\n</td>\n";
 			if($this->args['sortable']) {
 				$output .= "\t<td class='psu-col-order'>&nbsp;</td>";
