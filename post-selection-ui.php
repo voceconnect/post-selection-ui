@@ -171,6 +171,10 @@ class Post_Selection_Box {
 			'order' => $this->args['order']
 		);
 
+		if ( is_numeric( $this->args['post_parent'] ) ) {
+			$defaults['post_parent'] = $this->args['post_parent'];
+		}
+
 		if ( !empty( $this->args['tax_query'] ) ) {
 			$defaults['tax_query'] = $this->args['tax_query'];
 		}
