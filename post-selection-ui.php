@@ -171,7 +171,7 @@ class Post_Selection_Box {
 			'order' => $this->args['order']
 		);
 
-		if ( is_numeric( $this->args['post_parent'] ) ) {
+		if ( isset( $this->args['post_parent'] ) && is_numeric( $this->args['post_parent'] ) ) {
 			$defaults['post_parent'] = $this->args['post_parent'];
 		}
 
