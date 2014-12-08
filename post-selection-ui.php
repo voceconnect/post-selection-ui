@@ -2,7 +2,7 @@
 /*
 Plugin Name: Post Selection UI
 Description: An extraction of the post selection interface from the posts-to-posts plugin
-Version: 1.0.11
+Version: 1.0.12
 Author: prettyboymp, banderon, matstars
 Plugin URI: http://voceconnect.com
 
