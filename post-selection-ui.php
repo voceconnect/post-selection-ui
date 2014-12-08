@@ -2,7 +2,7 @@
 /*
 Plugin Name: Post Selection UI
 Description: An extraction of the post selection interface from the posts-to-posts plugin
-Version: 1.0.11
+Version: 1.0.12
 Author: prettyboymp, banderon, matstars
 Plugin URI: http://voceconnect.com
 
@@ -170,6 +170,10 @@ class Post_Selection_Box {
 			'orderby' => $this->args['orderby'],
 			'order' => $this->args['order']
 		);
+
+		if ( isset( $this->args['post_parent'] ) && is_int( $this->args['post_parent'] ) ) {
+			$defaults['post_parent'] = $this->args['post_parent'];
+		}
 
 		if ( !empty( $this->args['tax_query'] ) ) {
 			$defaults['tax_query'] = $this->args['tax_query'];
