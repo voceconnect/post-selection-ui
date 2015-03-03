@@ -139,7 +139,7 @@ class Post_Selection_Box {
 		);
 		$args = wp_parse_args($args, $defaults);
 		$args['selected'] = array_filter(array_map('intval', $args['selected']));
-		$args['post__in'] = array_filter(array_map('intval', $args['post__in']));
+		$args['post__in'] = array_map('intval', $args['post__in']);
 
 		$args['post_type'] = (array) $args['post_type'];
 		$args['post_status'] = (array) $args['post_status'];
