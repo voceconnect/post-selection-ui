@@ -84,11 +84,11 @@ class Post_Selection_UI {
 		if ( !empty($_GET['post_status']) ) {
 			$post_statuses = explode( ',', $_GET['post_status'] );
 
-			$defines_statuses = array_intersect( $post_statuses, array_keys( get_post_statuses() ) );
-			$special_statuses = array_intersect( array( 'inherit', 'any' ), $post_statuses );
-			$allowed_statuses = array_merge( $defines_statuses, $special_statuses );
-			if ( !empty( $allowed_statuses ) ) {
-				$args['post_status'] = $allowed_statuses;
+			$defined_statuses = array_keys( get_post_statuses() );
+			$allowed_statuses = array_merge( $defined_statuses, array( 'inherit', 'any' ) );
+			$filtered_statuses = array_intersect( $post_statuses, $allowed_statuses );
+			if ( !empty( $filtered_statuses ) ) {
+				$args['post_status'] = $filtered_statuses;
 			}
 		}
 		if ( !empty($_GET['include']) ) {
