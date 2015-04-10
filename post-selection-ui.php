@@ -2,7 +2,7 @@
 /*
 Plugin Name: Post Selection UI
 Description: An extraction of the post selection interface from the posts-to-posts plugin
-Version: 1.0.12
+Version: 1.0.13
 Author: prettyboymp, banderon, matstars
 Plugin URI: http://voceconnect.com
 
@@ -81,8 +81,15 @@ class Post_Selection_UI {
 		if (!empty($_GET['orderby'])) {
 			$args['orderby'] = sanitize_text_field( $_GET['orderby'] );
 		}
-		if ( !empty($_GET['post_status']) && ( in_array($_GET['post_status'], array_keys(get_post_statuses())) || $_GET['post_status'] === 'inherit' || $_GET['post_status'] == 'any' ) ) {
-			$args['post_status'] = $_GET['post_status'];
+		if ( !empty($_GET['post_status']) ) {
+			$post_statuses = explode( ',', $_GET['post_status'] );
+
+			$defined_statuses = array_keys( get_post_statuses() );
+			$allowed_statuses = array_merge( $defined_statuses, array( 'inherit', 'any' ) );
+			$filtered_statuses = array_intersect( $post_statuses, $allowed_statuses );
+			if ( !empty( $filtered_statuses ) ) {
+				$args['post_status'] = $filtered_statuses;
+			}
 		}
 		if ( !empty($_GET['include']) ) {
 			$args['post__in'] = array_filter(array_map('intval',explode(',', $_GET['include'])));
