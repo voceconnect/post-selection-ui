@@ -17,6 +17,7 @@
         }
     ],
     "autoload": {
-        "files": ["post-selection-ui.php"]
+        "classmap": ["src/Post_Selection_Box.php", "src/Post_Selection_UI.php"],
+        "files": ["post-selection-ui.php", "src/functions.php"]
     }
 }
