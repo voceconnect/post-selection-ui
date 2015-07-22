@@ -64,8 +64,11 @@ class Post_Selection_Box {
 		if ( !empty( $this->args['post__in'] ) ) {
 			$defaults['post__in'] = $this->args['post__in'];
 		}
-
+		if( isset( $this->args['post_per_page'] ) && ( $this->args['post_per_page'] > 100 || $this->args['post_per_page'] === -1 ) ) {
+			$this->args['post_per_page'] = 10;
+		}
 		$query_args = wp_parse_args($args, $defaults);
+
 		return new WP_Query($query_args);
 	}
 
@@ -83,30 +86,30 @@ class Post_Selection_Box {
 
 			$title = esc_html(get_the_title($post->ID));
 
-			$row_actions = '';
+			$safe_row_actions = '';
 			$post_type_object = get_post_type_object( get_post_type($post->ID));
 			$can_edit = current_user_can( $post_type_object->cap->edit_post, $post->ID );
 
 			if ( $can_edit ) {
-				$row_actions .= sprintf('<span class="edit"><a title="Edit this item" href="%s">Edit</a> | </span>', get_edit_post_link( $post->ID ));
+				$safe_row_actions .= sprintf('<span class="edit"><a title="Edit this item" href="%s">Edit</a> | </span>', esc_url(get_edit_post_link( $post->ID )));
 			}
 
 			if ( $post_type_object->publicly_queryable ) {
 				if ( ($can_edit || !in_array( $post->post_status, array( 'pending', 'draft', 'future' ) ) )
 					&& ( $post->post_status != 'trash') ) {
-					$row_actions .= sprintf('<span class="view"><a rel="permalink" title="View %s" href="%s">View</a></span>', esc_attr(get_the_title($post->ID)), esc_url(get_permalink($post->ID)));
+					$safe_row_actions .= sprintf('<span class="view"><a rel="permalink" title="View %s" href="%s">View</a></span>', esc_attr(get_the_title($post->ID)), esc_url(get_permalink($post->ID)));
 				}
 			}
 
-			if ($row_actions) {
-				$title .= '<div class="psu-row-actions">'.$row_actions.'</div>';
+			if ($safe_row_actions) {
+				$title .= '<div class="psu-row-actions">'.$safe_row_actions.'</div>';
 			}
 
 			$title = apply_filters('post-selection-ui-row-title', $title, $post->ID, $this->name, $this->args);
-			$output .= "<tr data-post_id='{$post->ID}' data-title='". esc_attr(get_the_title($post->ID)) ."' data-permalink='".  get_permalink($post->ID) . "'>\n".
+			$output .= "<tr data-post_id='{$post->ID}' data-title='". esc_attr(get_the_title($post->ID)) ."' data-permalink='".  esc_url(get_permalink(intval($post->ID))) . "'>\n".
 				"\t<td class='psu-col-create'><a href='#' title='Add'></a></td>".
 				"\t<td class='psu-col-title'>\n";
-			$output .= $title;
+			$output .= wp_kses_post( $title );
 			$output .= "\n\t</td>\n</tr>\n";
 		}
 		return $output;
@@ -128,23 +131,23 @@ class Post_Selection_Box {
 
 			$title = esc_html( get_the_title( $post_id ) );
 
-			$row_actions = '';
+			$safe_row_actions = '';
 			$can_edit = current_user_can( get_post_type_object( get_post_type($post_id) )->cap->edit_post, $post_id );
 			$post_type_object = get_post_type_object( get_post_type($post_id));
 
 			if ( $can_edit ) {
-				$row_actions .= sprintf('<span class="edit"><a title="Edit this item" href="%s">Edit</a></span>', get_edit_post_link( $post_id ));
+				$safe_row_actions .= sprintf('<span class="edit"><a title="Edit this item" href="%s">Edit</a></span>', esc_url(get_edit_post_link( $post_id )));
 			}
 
 			if ( $post_type_object->publicly_queryable ) {
 				if ( ($can_edit || !in_array( get_post($post_id)->post_status, array( 'pending', 'draft', 'future' ) ) )
 					&& ( get_post($post_id)->post_status != 'trash') ) {
-					$row_actions .= sprintf('| <span class="view"><a rel="permalink" title="View %s" href="%s">View</a></span>', esc_attr(get_the_title($post_id)), esc_url(get_permalink($post_id)));
+					$safe_row_actions .= sprintf('| <span class="view"><a rel="permalink" title="View %s" href="%s">View</a></span>', esc_attr(get_the_title($post_id)), esc_url(get_permalink($post_id)));
 				}
 			}
 
-			if ($row_actions) {
-				$title .= '<div class="psu-row-actions">'.$row_actions.'</div>';
+			if ($safe_row_actions) {
+				$title .= '<div class="psu-row-actions">'.$safe_row_actions.'</div>';
 			}
 
 			$title = apply_filters('post-selection-ui-row-title', $title, $post_id, $this->name, $this->args);
@@ -173,9 +176,9 @@ class Post_Selection_Box {
 			"<div class='psu-navigation'>\n".
 			"\t<div class='psu-prev button inactive' title='previous'>&lsaquo;</div>".
 			"\t<div>\n".
-			"\t\t<span class='psu-current' data-num='".$cpage."'>".$cpage."</span>\n".
+			"\t\t<span class='psu-current' data-num='".esc_attr( $cpage )."'>".esc_html( $cpage )."</span>\n".
 			"\t\tof\n".
-			"\t\t<span class='psu-total' data-num='".$max_pages."'>".$max_pages."</span>\n".
+			"\t\t<span class='psu-total' data-num='".esc_attr( $max_pages )."'>".esc_html( $max_pages )."</span>\n".
 			"\t</div>\n".
 			"\t<div class='psu-next button ' title='next'>&rsaquo;</div>\n".
 			"</div>\n";
@@ -207,7 +210,7 @@ class Post_Selection_Box {
 						<th class="psu-col-delete"><a href="#" title="<?php printf(__("Remove all %s"), $this->args['labels']['name']) ?>"></a></th>
 						<th class="psu-col-title"><?php echo esc_html($this->args['labels']['singular_name']); ?></th>
 						<?php if($this->args['sortable']) : ?>
-							<th class="psu-col-order"><?php _e('Sort'); ?></th>
+							<th class="psu-col-order"><?php html_esc_e('Sort'); ?></th>
 						<?php endif; ?>
 					</tr>
 				</thead>

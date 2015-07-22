@@ -104,7 +104,7 @@ class Post_Selection_UI {
 
 		$response = new stdClass();
 		$response->rows = $psu_box->render_results($args);
-		die(json_encode($response));
+		die(wp_send_json($response));
 	}
 
 }
