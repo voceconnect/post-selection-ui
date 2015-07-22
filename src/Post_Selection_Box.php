@@ -178,7 +178,7 @@ class Post_Selection_Box {
 			"\t<div>\n".
 			"\t\t<span class='psu-current' data-num='".esc_attr( $cpage )."'>".esc_html( $cpage )."</span>\n".
 			"\t\tof\n".
-			"\t\t<span class='psu-total' data-num='".esc_attr( $max_pages )."'>".esc_attr( $max_pages )."</span>\n".
+			"\t\t<span class='psu-total' data-num='".esc_attr( $max_pages )."'>".esc_html( $max_pages )."</span>\n".
 			"\t</div>\n".
 			"\t<div class='psu-next button ' title='next'>&rsaquo;</div>\n".
 			"</div>\n";
