@@ -210,7 +210,7 @@ class Post_Selection_Box {
 						<th class="psu-col-delete"><a href="#" title="<?php printf(__("Remove all %s"), $this->args['labels']['name']) ?>"></a></th>
 						<th class="psu-col-title"><?php echo esc_html($this->args['labels']['singular_name']); ?></th>
 						<?php if($this->args['sortable']) : ?>
-							<th class="psu-col-order"><?php html_esc_e('Sort'); ?></th>
+							<th class="psu-col-order"><?php esc_html_e('Sort'); ?></th>
 						<?php endif; ?>
 					</tr>
 				</thead>
