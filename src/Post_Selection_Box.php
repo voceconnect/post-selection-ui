@@ -64,7 +64,7 @@ class Post_Selection_Box {
 		if ( !empty( $this->args['post__in'] ) ) {
 			$defaults['post__in'] = $this->args['post__in'];
 		}
-		if( isset( $this->args['post_per_page'] ) && ( $this->args['post_per_page'] > 100 || $this->args['post_per_page'] === -1 ) ) {
+		if( isset( $this->args['post_per_page'] ) && ( intval( $this->args['post_per_page'] ) > 100 || intval( $this->args['post_per_page'] ) === -1 ) ) {
 			$this->args['post_per_page'] = 10;
 		}
 		$query_args = wp_parse_args($args, $defaults);
