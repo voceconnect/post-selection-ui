@@ -229,12 +229,11 @@
 				prototype.infinite_scroll =  function(page){
 					var	$box = this,
 						$this = this.tab,
-						updating = false,
-						height = $this.prop('scrollHeight') - $this.height()
+						updating = false
 					;
 					$this.scroll(function () {
 						var	scroll = $this.scrollTop(),
-							isScrolledToEnd = (scroll >= (height - 50))
+							isScrolledToEnd = (scroll >= ($this.prop('scrollHeight') - $this.height() - 50))
 						;
 
 						if (isScrolledToEnd && !updating) {
