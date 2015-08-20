@@ -101,6 +101,8 @@
 				} else {
 					$selectionBox.find('.psu-add-posts').show();
 				}
+
+				$selectionBox.trigger('updated-psu-box');
 			}
 
 			is_full = function() {
